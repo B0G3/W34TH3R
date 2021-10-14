@@ -1,13 +1,20 @@
 module.exports = {
     categories: {
         0: {
-            "name": ":grey_question: Pomocnicze"
+            "name": "Pomocnicze",
+            "icon": ":grey_question:"
         },
         1: {
-            "name": ":thunder_cloud_rain: Pogodynka"
+            "name": "Pogodynka",
+            "icon": ":thunder_cloud_rain:"
         },
         2: {
-            "name": ":map: Mapy"
+            "name": "Mapy",
+            "icon": ":map:"
+        },
+        3: {
+            "name": "Statystyki",
+            "icon": ":bar_chart:"
         }
     }
 }
