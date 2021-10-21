@@ -9,10 +9,6 @@ module.exports = {
             "icon": ":thunder_cloud_rain:"
         },
         2: {
-            "name": "Mapy",
-            "icon": ":map:"
-        },
-        3: {
             "name": "Statystyki",
             "icon": ":bar_chart:"
         }

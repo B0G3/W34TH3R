@@ -1,9 +1,8 @@
 const Discord = require('discord.js');
 const embedUtil = require("../util/embedUtil.js");
-const categories = require("../util/categoryUtil.js").categories;
+const {categories} = require("../util/categoryUtil.js");
 
-async function execFunction(bot, message, args){
-
+const execFunction = async (bot, message, args) => {
 	if(args[0]){
 		let cmd = bot.commands.get(args[0]) || bot.commands.get(bot.aliases.get(args[0]));
 		if(!cmd){
@@ -37,7 +36,7 @@ async function execFunction(bot, message, args){
 		});
 		helpEmbed.addFields(
 			{ name: `${categories[e].icon} ${categories[e].name}`, value: "```CSS\n"+sum+"```"}
-			)
+		)
 	}
 	message.channel.send({embeds: [helpEmbed]});
 }

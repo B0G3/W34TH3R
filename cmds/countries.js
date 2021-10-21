@@ -1,9 +1,9 @@
 const Discord = require('discord.js');
-const iso3166 = require("../util/countryCodes.js").iso3166;
 const countries = require("i18n-iso-countries");
 const embedUtil = require("../util/embedUtil.js");
+const {iso3166} = require("../util/countryCodes.js");
 
-function execFunction(bot, message, args){
+const execFunction = (bot, message, args) => {
 	const countryCodes = [...iso3166];
 	const maxPerPage = 40;
 	var pages = Math.floor(countryCodes.length/maxPerPage) + 1;

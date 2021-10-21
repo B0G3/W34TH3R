@@ -4,6 +4,8 @@ const embedUtil = require("../util/embedUtil.js");
 const {iso3166} = require("../util/countryCodes.js");
 const {prefix} = require("../botSettings.json");
 
+var fs = require('fs');
+
 const isNumeric = (str) => {
     return /^\d+$/.test(str);
 }
@@ -16,7 +18,7 @@ const execFunction = async (bot, message, args) => {
 	}else{
 		// Kiedy podajemy nazwe miejscowosci
 		if(!isNumeric(args[0].charAt(0))){
-			result = await dataUtil.fetchByCity(args.join(' '));
+			result = await dataUtil.fetchForecastByCity(args.join(' '));
 		}else{
 			// W przeciwnym przypadku musza byc dwa argumenty
 			if(!args[1]){
@@ -33,32 +35,40 @@ const execFunction = async (bot, message, args) => {
 						return;
 					}
 
-					result = await dataUtil.fetchByZip(zipCode, countryCode);
+					result = await dataUtil.fetchForecastByZip(zipCode, countryCode);
 				}else{
 					// Sprawdzenie po koordynatach
 					let x = args[0];
 					let y = args[1];
-					result = await dataUtil.fetchByCoords(x, y);
+					result = await dataUtil.fetchForecastByCoords(x, y);
 				}
 			}
 		}
 	}
 	
+	var embeds = [];
 	if(!result.data || result.data.cod != 200){
 		if(result.data) message.channel.send({content: `Wystąpił błąd (kod ${result.data.cod}): \`${result.data.message}\``});
 		else message.channel.send({content: `Wystąpił niespodziewany błąd`});
 	}else{
-		let embed = embedUtil.weatherEmbed(result.data);
-		await message.channel.send({embeds: [embed]});
+		while(result.data.list.length>0){
+			let day = result.data.list.splice(0, 8);
+			let tempChart = await dataUtil.fetchTemperatureChart(day);
+			let embed = embedUtil.forecastPageEmbed(tempChart);
+			embeds.push(embed);
+		}
+
+		embedUtil.createPages(message, embeds, 120000);
 	}
+	
 }
 
 module.exports = {
 	run: execFunction,
-	name: "weather",
-	aliases: ["wt", "w"],
-	description: "Sprawdzenie pogody zależnie od miasta / koordynatów / kodu pocztowego oraz kodu państwa",
-	longDescription: `Sprawdza pogodę zależnie od podanych danych. Danymi mogą być: \`miejscowość\`, \`koordynaty x i y\`, \`kod pocztowy i kod państwa\`\nPrzykłady użycia:\n\`${prefix}weather toruń\`\n\`${prefix}weather 53.0 18.6\`\n\`${prefix}weather 87-100 PL\``,
+	name: "forecast",
+	aliases: ["fc", "f"],
+	description: "Sprawdzenie prognozy pogody zależnie od miasta / koordynatów / kodu pocztowego oraz kodu państwa",
+	longDescription: `Sprawdza prognozę pogody zależnie od podanych danych. Danymi mogą być: \`miejscowość\`, \`koordynaty x i y\`, \`kod pocztowy i kod państwa\`\nPrzykłady użycia:\n\`${prefix}forecast toruń\`\n\`${prefix}forecast 53.0 18.6\`\n\`${prefix}forecast 87-100 PL\``,
 	syntax: "<Dane>",
 	categoryId: 1,
 }
