@@ -2,7 +2,9 @@ const botSettings = require("./botSettings.json");
 const prefix = botSettings.prefix;
 
 const Discord = require("discord.js");
+const mongoose = require('mongoose');
 const fs = require("fs");
+//const { triggerAsyncId } = require("async_hooks");
 
 const bot = new Discord.Client({ 
     intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES],
@@ -39,6 +41,16 @@ fs.readdir("./cmds/", (err, files) => {
         }
     });
 });
+
+mongoose.connect(botSettings.mongodb_srv, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('Connected to database!');
+}).catch((err)=>{
+    console.log(err);
+    process.exit(1);
+})
 
 bot.on("ready", () => {
     console.log('Ready!');

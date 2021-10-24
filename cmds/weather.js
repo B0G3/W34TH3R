@@ -9,7 +9,7 @@ const isNumeric = (str) => {
 }
 
 const execFunction = async (bot, message, args) => {
-	var result;
+	let result;
 	if(!args[0]){
 		message.channel.send({content: "Musisz podać conajmniej jeden argument!"});
 		return;
@@ -48,7 +48,7 @@ const execFunction = async (bot, message, args) => {
 		if(result.data) message.channel.send({content: `Wystąpił błąd (kod ${result.data.cod}): \`${result.data.message}\``});
 		else message.channel.send({content: `Wystąpił niespodziewany błąd`});
 	}else{
-		let embed = embedUtil.weatherEmbed(result.data);
+		let embed = await embedUtil.weatherEmbed(result.data);
 		await message.channel.send({embeds: [embed]});
 	}
 }

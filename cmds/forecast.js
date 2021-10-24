@@ -3,15 +3,14 @@ const dataUtil = require("../util/dataUtil.js");
 const embedUtil = require("../util/embedUtil.js");
 const {iso3166} = require("../util/countryCodes.js");
 const {prefix} = require("../botSettings.json");
-
-var fs = require('fs');
+const fs = require('fs');
 
 const isNumeric = (str) => {
     return /^\d+$/.test(str);
 }
 
 const execFunction = async (bot, message, args) => {
-	var result;
+	let result;
 	if(!args[0]){
 		message.channel.send({content: "Musisz podać conajmniej jeden argument!"});
 		return;
@@ -46,18 +45,17 @@ const execFunction = async (bot, message, args) => {
 		}
 	}
 	
-	var embeds = [];
+	let embeds = [];
 	if(!result.data || result.data.cod != 200){
 		if(result.data) message.channel.send({content: `Wystąpił błąd (kod ${result.data.cod}): \`${result.data.message}\``});
 		else message.channel.send({content: `Wystąpił niespodziewany błąd`});
 	}else{
+		const cityInfo = result.data.city;
 		while(result.data.list.length>0){
 			let day = result.data.list.splice(0, 8);
-			let tempChart = await dataUtil.fetchTemperatureChart(day);
-			let embed = embedUtil.forecastPageEmbed(tempChart);
+			let embed = await embedUtil.forecastPageEmbed(day, cityInfo);
 			embeds.push(embed);
 		}
-
 		embedUtil.createPages(message, embeds, 120000);
 	}
 	

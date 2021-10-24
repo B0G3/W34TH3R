@@ -16,7 +16,7 @@ const execFunction = async (bot, message, args) => {
 		return;
 	}
 
-	var sortedCommands = [];
+	let sortedCommands = [];
 
 	for(e in categories){
 		sortedCommands[e] = bot.commands.filter(v => v.categoryId == e);
@@ -27,7 +27,7 @@ const execFunction = async (bot, message, args) => {
 	.setTitle(`**Lista dostępnych komend:**`)
 	
 	for(e in categories){
-		var sum = '';
+		let sum = '';
 		sortedCommands[e].forEach(el => {
 			if(!el.hidden){
 				let syntax = (el.syntax!=null)?` ${el.syntax}`:'';

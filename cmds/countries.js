@@ -6,15 +6,15 @@ const {iso3166} = require("../util/countryCodes.js");
 const execFunction = (bot, message, args) => {
 	const countryCodes = [...iso3166];
 	const maxPerPage = 40;
-	var pages = Math.floor(countryCodes.length/maxPerPage) + 1;
-	var embedList = [];
-	var i = 0;
-	var p = 1;
-	var description = "";
+	const pages = Math.floor(countryCodes.length/maxPerPage) + 1;
+	let embedList = [];
+	let i = 0;
+	let p = 1;
+	let description = "";
 
 	while(countryCodes.length>0){
 		const chunk = countryCodes.splice(0, maxPerPage);
-		var description = "";
+		description = "";
 
 		for(c of chunk){
 			let countryName = countries.getName(c, "pl");

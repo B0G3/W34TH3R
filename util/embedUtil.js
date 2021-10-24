@@ -1,15 +1,32 @@
 const Discord = require('discord.js');
 const countries = require("i18n-iso-countries");
-const categories = require("../util/categoryUtil.js").categories;
+const dataUtil = require("../util/dataUtil.js");
+const {categories} = require("../util/categoryUtil.js");
 
-String.prototype.capitalize = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
+const capitalize = (s) => (s && s[0].toUpperCase() + s.slice(1)) || ""
+
+const parseDate = (input) => {
+	const parts = input.match(/(\d+)/g);
+	return {
+		year: parts[0],
+		month: parts[1],
+		day: parts[2],
+		hour: parts[3], 
+		minute: parts[4]
+	};
+}
+
+const calcAverage = (array) => {
+    let sum = 0;
+    for(e in array){
+        sum += array[e];
+    }
+    return sum/array.length;
 }
 
 module.exports = {
-    createPages: async function(message, pages, timeout){
-        var timeForStart = Date.now();
-        var pageAmount = pages.length;
+    createPages: async (message, pages, timeout) => {
+        const pageAmount = pages.length;
         const forwardButton = new Discord.MessageButton()
         .setCustomId(`frwd_btn`)
         .setLabel("")
@@ -27,12 +44,12 @@ module.exports = {
         .setLabel("ZAKOŃCZ")
         .setStyle("SUCCESS")
 
-        var pageMovingButtons = new Discord.MessageActionRow()
+        const pageMovingButtons = new Discord.MessageActionRow()
         .addComponents(backwardButton)
         .addComponents(forwardButton)
         .addComponents(abandonButton)
-        var currentPage = 0;
-        var m = await message.channel.send({content: 'Proszę czekać...'});
+        let currentPage = 0;
+        let m = await message.channel.send({content: 'Proszę czekać...'});
         m.edit({content: `Strona \`[${currentPage+1}/${pageAmount}]\``, embeds: [pages[currentPage]], components: [pageMovingButtons]});
 
         const filter = i => (i.customId == 'frwd_btn' || i.customId == 'bcwd_btn_embed' || i.customId == 'ab_btn_embed');
@@ -72,7 +89,7 @@ module.exports = {
         });
 
     },
-    helpEmbed: function(cmd){
+    helpEmbed: (cmd) => {
         let description = `**Kategoria**: ${categories[cmd.categoryId].name}\n`;
         description += cmd.syntax?(`**Syntax**: ${cmd.syntax}\n`):'';
         description += `**Aliasy**: ${cmd.aliases.join(', ')}\n`;
@@ -84,25 +101,23 @@ module.exports = {
         .setDescription(description);
         return embed;
     },
-    countryListEmbed: function(author, description){
+    countryListEmbed: (author, description) => {
         const embed = new Discord.MessageEmbed()
         .setColor('#3ba55d')
         .setTitle(`Dostępne kraje | ISO3166`)
-        //.setTitle(`Dostępne kraje [${page}/${pages}] ISO3166`)
         .setTimestamp()
         .setFooter(`Wywołane przez ${author.username}`)
         .setDescription(description);
         return embed;
     },
-    weatherEmbed: function(data, _countryData = null){
-        var countryInfo = '';
-        var countryCode = (_countryData!=null)?_countryData.country:data.sys.country;
+    weatherEmbed: async (data, _countryData = null) => {
+        let countryInfo = '';
+        let countryCode = (_countryData!=null)?_countryData.country:data.sys.country;
         if(countryCode) countryInfo = ", " + countries.getName(countryCode, "pl", {select: "official"}) + `, ${countryCode} \:flag_${countryCode.toLowerCase()}:`;
-
 
         const embed = new Discord.MessageEmbed()
         .setColor('#5865f2')
-        .setAuthor(data.weather[0].description.capitalize(), `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`)
+        .setAuthor(capitalize(data.weather[0].description), `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`)
         .setDescription((_countryData!=null)?_countryData.name:data.name + countryInfo)
         .addField(`Temperatura:`, `${data.main.temp}\u00B0 C`, true)
         .addField(`Temp max:`, `${data.main.temp_max}\u00B0 C`, true)
@@ -112,12 +127,26 @@ module.exports = {
         .addField(`Ciśnienie:`, `${data.main.pressure} hpa`, true)
         return embed;
     },
-    forecastPageEmbed: function(imageUrl, dayData, _countryData = null){
+    forecastPageEmbed: async (dayData, cityData) => {
+        const tempChart = await dataUtil.fetchForecastChart(dayData);
+        const tempArr = dayData.map(e => e.main.temp);
+        const humidityArr = dayData.map(e => e.main.humidity);
+
+        const avgTemp = calcAverage(tempArr);
+        const avgHumidity = calcAverage(humidityArr);
+
+        const countryCode = cityData.country;
+        const cityName = cityData.name;
+        const dateString = dayData[0].dt_txt + ' \+ 24h';
+
         const embed = new Discord.MessageEmbed()
         .setColor('#5865f2')
-        .setTitle('Prognoza pogody | Najbliższe 24h')
-        .setDescription('--Placeholder--')
-        .setImage(imageUrl)
+        .setAuthor('Prognoza pogody', `http://openweathermap.org/img/wn/${dayData[0].weather[0].icon}.png`)
+        .addField(`Śr. temp:`, `${Math.round(avgTemp, 2)}\u00B0 C`, true)
+        .addField(`Śr. wilg:`, `${Math.round(avgHumidity, 2)} %`, true)
+        .addField(`Ciśnienie:`, `${dayData[0].main.pressure} hPa`, true)
+        .setDescription(countryCode?(`${cityName}, ${countries.getName(countryCode, 'pl', {select: "official"})}, ${countryCode} \:flag_${countryCode.toLowerCase()}:\n`):'' + `Data: \`\`\`${dateString}\`\`\``)
+        .setImage(tempChart)
         return embed;
     }
 }

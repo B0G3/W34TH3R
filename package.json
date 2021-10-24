@@ -21,6 +21,7 @@
     "discord.js": "^13.1.0",
     "fs": "0.0.1-security",
     "i18n-iso-countries": "^6.8.0",
+    "mongoose": "^6.0.12",
     "mysql": "^2.18.1",
     "node": "16.6.1",
     "quickchart-js": "^1.4.2"

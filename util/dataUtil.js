@@ -2,8 +2,8 @@ const axios = require('axios');
 const botSettings = require("../botSettings.json");
 const QuickChart = require('quickchart-js');
 
-function parseDate(input) {
-	var parts = input.match(/(\d+)/g);
+parseDate = (input) => {
+	let parts = input.match(/(\d+)/g);
 	return {
 		year: parts[0],
 		month: parts[1],
@@ -14,117 +14,77 @@ function parseDate(input) {
 }
 
 module.exports = {
-	fetchByCity: async function(city){
-		var result;
-		await axios.get(
-			`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${botSettings.owm_token}&lang=pl`
-		).then(res => {
-			result = {
-				data: res.data
-			}
-		}).catch(err => {
-			result =  {
-				data: err.response.data
-			}
-		})
-		return result;
+	fetchByCity: async (city) => {
+		try{
+			let res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${botSettings.owm_token}&lang=pl`);
+			return { data: res.data }
+		}catch(err){
+			console.log(err);
+			return { data: err.response.data }
+		}
 	},
-	fetchByCoords: async function(x, y){
-		var result;
-		await axios.get(
-			`https://api.openweathermap.org/data/2.5/weather?lat=${x}&lon=${y}&units=metric&appid=${botSettings.owm_token}&lang=pl`
-		).then(res => {
-			result = {
-				data: res.data
-			}
-		}).catch(err => {
-			result =  {
-				data: err.response.data
-			}
-		})
-		return result;
+	fetchByCoords: async (x, y) => {
+		try{
+			let res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${x}&lon=${y}&units=metric&appid=${botSettings.owm_token}&lang=pl`);
+			return { data: res.data }
+		}catch(err){
+			console.log(err);
+			return { data: err.response.data }
+		}
 	},
-	fetchByZip: async function(zipCode, countryCode){
-		var result;
-		await axios.get(
-			`https://api.openweathermap.org/data/2.5/weather?zip=${zipCode},${countryCode}&units=metric&appid=${botSettings.owm_token}&lang=pl`
-		).then(res => {
-			result = {
-				data: res.data
-			}
-		}).catch(err => {
-			result =  {
-				data: err.response.data
-			}
-		})
-		return result;
+	fetchByZip: async (zipCode, countryCode) => {
+		try{
+			let res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?zip=${zipCode},${countryCode}&units=metric&appid=${botSettings.owm_token}&lang=pl`);
+			return { data: res.data }
+		}catch(err){
+			console.log(err);
+			return { data: err.response.data }
+		}
 	},
-	fetchForecastByCity: async function(city, days = 5){
-		var result;
-		await axios.get(
-			`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&units=metric&appid=${botSettings.owm_token}&lang=pl`
-		).then(res => {
-			res.data.list = res.data.list.slice(0, days*8);
-			result = {
-				data: res.data
-			}
-		}).catch(err => {
-			result =  {
-				data: err.response.data
-			}
-		})
-		return result;
+	fetchForecastByCity: async (city) => {
+		try{
+			let res = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&units=metric&appid=${botSettings.owm_token}&lang=pl`);
+			return { data: res.data }
+		}catch(err){
+			console.log(err);
+			return { data: err.response.data }
+		}
 	},
-	fetchForecastByCoords: async function(x, y, days = 5){
-		var result;
-		await axios.get(
-			`https://api.openweathermap.org/data/2.5/forecast?lat=${x}&lon=${y}&units=metric&appid=${botSettings.owm_token}&lang=pl`
-		).then(res => {
-			res.data.list = res.data.list.slice(0, days*8);
-			result = {
-				data: res.data
-			}
-		}).catch(err => {
-			result =  {
-				data: err.response.data
-			}
-		})
-		return result;
+	fetchForecastByCoords: async (x, y) => {
+		try{
+			let res = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${x}&lon=${y}&units=metric&appid=${botSettings.owm_token}&lang=pl`);
+			return { data: res.data }
+		}catch(err){
+			console.log(err);
+			return { data: err.response.data }
+		}
 	},
-	fetchForecastByZip: async function(zipCode, countryCode, days = 5){
-		var result;
-		await axios.get(
-			`https://api.openweathermap.org/data/2.5/forecast?zip=${zipCode},${countryCode}&units=metric&appid=${botSettings.owm_token}&lang=pl`
-		).then(res => {
-			res.data.list = res.data.list.slice(0, days*8);
-			result = {
-				data: res.data
-			}
-		}).catch(err => {
-			result =  {
-				data: err.response.data
-			}
-		})
-		return result;
+	fetchForecastByZip: async (zipCode, countryCode, days = 5) => {
+		try{
+			let res = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?zip=${zipCode},${countryCode}&units=metric&appid=${botSettings.owm_token}&lang=pl`);
+			return { data: res.data }
+		}catch(err){
+			console.log(err);
+			return { data: err.response.data }
+		}
 	},
-	fetchTemperatureChart: async function(dayInfo){
+	fetchForecastChart: async (dayInfo) => {
 		temperatureArr = dayInfo.map(e => e.main.temp)
-		const minTemp = Math.ceil(Math.min(...temperatureArr))
-		const maxTemp = Math.ceil(Math.max(...temperatureArr))
+		const minTemp = Math.ceil(Math.min(...temperatureArr));
+		const maxTemp = Math.ceil(Math.max(...temperatureArr));
 
-		humidityArrR = dayInfo.map(e => e.main.humidity);
 		humidityArr = dayInfo.map(e => {
-			return (e.main.humidity/100)*(maxTemp-minTemp+4)+minTemp-2
+			return (e.main.humidity/100)*(maxTemp-minTemp+4)+minTemp-2;
 		});
 
 		hourArr = dayInfo.map(e => { 
 			let parsedDate = parseDate(e.dt_txt);
-			let hourDescription = `${parsedDate.hour}:${parsedDate.minute}`
+			let hourDescription = `${parsedDate.hour}:${parsedDate.minute}`;
 			return hourDescription;
 		});
 
-		const myChart = new QuickChart();
-		myChart
+		const forecastChart = new QuickChart();
+		forecastChart
 		.setConfig({
 			data: { labels: hourArr, datasets: [
 				{ label: 'Temperatura', type: 'line', yAxisId: 'y1', data: temperatureArr, borderColor: '#f7d257', backgroundColor: '#f7d25750' },
@@ -185,12 +145,9 @@ module.exports = {
 			}
 		})
 		.setWidth(500)
-		.setHeight(300)
+		.setHeight(250)
 		.setBackgroundColor('transparent');
 
-		//var result = `https://quickchart.io/chart?c={type:'line',borderColor:'ff6384',data:{labels:[${hourArr.join(',')}],datasets:[{label:'Temperatura',data:[${temperatureArr.join(',')}]}]}}`
-		var result = myChart.getUrl();
-
-		return result;
+		return forecastChart.getUrl();
 	}
 }
