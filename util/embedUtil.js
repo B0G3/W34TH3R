@@ -97,7 +97,7 @@ module.exports = {
 
         const embed = new Discord.MessageEmbed()
         .setColor('#cb4b16')
-        .setTitle(`${categories[cmd.categoryId].icon} Komenda \`${cmd.name}\``)
+        .setTitle(`${categories[cmd.categoryId].icon} | Komenda \`${cmd.name}\``)
         .setDescription(description);
         return embed;
     },
@@ -141,11 +141,12 @@ module.exports = {
 
         const embed = new Discord.MessageEmbed()
         .setColor('#5865f2')
-        .setAuthor('Prognoza pogody', `http://openweathermap.org/img/wn/${dayData[0].weather[0].icon}.png`)
+        .setTitle('Prognoza pogody'+ (countryCode?(` | ${cityName}, ${countries.getName(countryCode, 'pl', {select: "official"})}, ${countryCode}`):''))
+        .setThumbnail(`http://openweathermap.org/img/wn/${dayData[0].weather[0].icon}.png`)
         .addField(`Śr. temp:`, `${Math.round(avgTemp, 2)}\u00B0 C`, true)
         .addField(`Śr. wilg:`, `${Math.round(avgHumidity, 2)} %`, true)
         .addField(`Ciśnienie:`, `${dayData[0].main.pressure} hPa`, true)
-        .setDescription(countryCode?(`${cityName}, ${countries.getName(countryCode, 'pl', {select: "official"})}, ${countryCode} \:flag_${countryCode.toLowerCase()}:\n`):'' + `Data: \`\`\`${dateString}\`\`\``)
+        .setDescription(`**Data:** \`\`${dateString}\`\``)
         .setImage(tempChart)
         return embed;
     }

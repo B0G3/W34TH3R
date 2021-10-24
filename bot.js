@@ -1,10 +1,8 @@
-const botSettings = require("./botSettings.json");
-const prefix = botSettings.prefix;
-
 const Discord = require("discord.js");
-const mongoose = require('mongoose');
+const botSettings = require("./botSettings.json");
+const prefixSchema = require("./models/prefix.js");
+const mongoose = require("mongoose");
 const fs = require("fs");
-//const { triggerAsyncId } = require("async_hooks");
 
 const bot = new Discord.Client({ 
     intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES],
@@ -16,6 +14,22 @@ const bot = new Discord.Client({
 
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
+
+bot.prefix = async function(message){
+    let prefix;
+
+    const data = await prefixSchema.findOne({guildId: message.guild.id}).catch(err => {
+        console.log(err);
+    })
+
+    if(data){
+        prefix = data.prefix;
+    }else{
+        prefix = botSettings.prefix;
+    }
+ 
+    return prefix;
+}
 
 fs.readdir("./cmds/", (err, files) => {
     if(err) console.error(err);
@@ -74,6 +88,8 @@ bot.on("messageCreate", async message => {
     let messageArray = message.content.split(" ");
     let command = messageArray[0];
 
+    let prefix = await bot.prefix(message);
+
     if(!command.startsWith(prefix)) return;
     let args = messageArray.slice(1);
     let cmdStr = command.slice(prefix.length);
@@ -81,6 +97,9 @@ bot.on("messageCreate", async message => {
 
     if(cmd){
         if(!cmd.adminonly) cmd.run(bot, message, args);
+        else{
+            cmd.run(bot, message, args);
+        }
     }else{
         message.channel.send("Nie znaleziono komendy.");
     }

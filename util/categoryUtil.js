@@ -11,6 +11,10 @@ module.exports = {
         2: {
             "name": "Statystyki",
             "icon": ":bar_chart:"
+        },
+        3: {
+            "name": "Ustawienia",
+            "icon": ":screwdriver:"
         }
     }
 }

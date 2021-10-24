@@ -2,7 +2,6 @@ const Discord = require('discord.js');
 const dataUtil = require("../util/dataUtil.js");
 const embedUtil = require("../util/embedUtil.js");
 const {iso3166} = require("../util/countryCodes.js");
-const {prefix} = require("../botSettings.json");
 const fs = require('fs');
 
 const isNumeric = (str) => {
@@ -65,8 +64,8 @@ module.exports = {
 	run: execFunction,
 	name: "forecast",
 	aliases: ["fc", "f"],
-	description: "Sprawdzenie prognozy pogody zależnie od miasta / koordynatów / kodu pocztowego oraz kodu państwa",
-	longDescription: `Sprawdza prognozę pogody zależnie od podanych danych. Danymi mogą być: \`miejscowość\`, \`koordynaty x i y\`, \`kod pocztowy i kod państwa\`\nPrzykłady użycia:\n\`${prefix}forecast toruń\`\n\`${prefix}forecast 53.0 18.6\`\n\`${prefix}forecast 87-100 PL\``,
+	description: "Sprawdzenie prognozy pogody (najbliższe 5 dni) zależnie od miasta / koordynatów / kodu pocztowego oraz kodu państwa",
+	longDescription: `Sprawdza prognozę pogody (najbliższe 5 dni) zależnie od podanych danych. Danymi mogą być: \`miejscowość\`, \`koordynaty x i y\`, \`kod pocztowy i kod państwa\`\nPrzykłady użycia:\n\`forecast toruń\`\n\`forecast 53.0 18.6\`\n\`forecast 87-100 PL\``,
 	syntax: "<Dane>",
 	categoryId: 1,
 }

@@ -2,7 +2,6 @@ const Discord = require('discord.js');
 const dataUtil = require("../util/dataUtil.js");
 const embedUtil = require("../util/embedUtil.js");
 const {iso3166} = require("../util/countryCodes.js");
-const {prefix} = require("../botSettings.json");
 
 const isNumeric = (str) => {
     return /^\d+$/.test(str);
@@ -58,7 +57,7 @@ module.exports = {
 	name: "weather",
 	aliases: ["wt", "w"],
 	description: "Sprawdzenie pogody zależnie od miasta / koordynatów / kodu pocztowego oraz kodu państwa",
-	longDescription: `Sprawdza pogodę zależnie od podanych danych. Danymi mogą być: \`miejscowość\`, \`koordynaty x i y\`, \`kod pocztowy i kod państwa\`\nPrzykłady użycia:\n\`${prefix}weather toruń\`\n\`${prefix}weather 53.0 18.6\`\n\`${prefix}weather 87-100 PL\``,
+	longDescription: `Sprawdza pogodę zależnie od podanych danych. Danymi mogą być: \`miejscowość\`, \`koordynaty x i y\`, \`kod pocztowy i kod państwa\`\nPrzykłady użycia:\n\`weather toruń\`\n\`weather 53.0 18.6\`\n\`weather 87-100 PL\``,
 	syntax: "<Dane>",
 	categoryId: 1,
 }
