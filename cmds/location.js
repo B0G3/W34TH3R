@@ -1,21 +1,17 @@
 const Discord = require('discord.js');
 const dataUtil = require("../util/dataUtil.js");
-const embedUtil = require("../util/embedUtil.js");
-const {iso3166} = require("../util/countryCodes.js");
+const locationSchema = require("../models/location.js");
 
 const isNumeric = (str) => {
     return /^\d+$/.test(str);
 }
 
 const execFunction = async (bot, message, args) => {
-	let result;
+    let result;
 	if(!args[0]){
-		let location = await dataUtil.getUserLocation(message.author.id);
-		if(!location) message.channel.send({content: "Musisz podać conajmniej jeden argument lub ustawić domyślną lokację!"});
-		else{
-			let _args = [location.lat, location.lon];
-			execFunction(bot, message, _args);
-		}
+        let location = await dataUtil.getUserLocation(message.author.id);
+		if(location) message.channel.send({content: `Twoja obecna domyślna lokacja to ${location.name} | \`${location.lon}, ${location.lat}\``});
+		else message.channel.send({content: "Nie ustawiłeś domyślnej lokalizacji. Musisz podać conajmniej jeden argument!"});
 		return;
 	}else{
 		// Kiedy podajemy nazwe miejscowosci
@@ -47,22 +43,34 @@ const execFunction = async (bot, message, args) => {
 			}
 		}
 	}
-	
+
 	if(!result.data || result.data.cod != 200){
 		if(result.data) message.channel.send({content: `Wystąpił błąd (kod ${result.data.cod}): \`${result.data.message}\``});
 		else message.channel.send({content: `Wystąpił niespodziewany błąd`});
 	}else{
-		let embed = await embedUtil.weatherEmbed(result.data);
-		await message.channel.send({embeds: [embed]});
+
+        locationSchema.findOne({userId: message.author.id}, async(err, data) => {
+            if(err) throw err;
+            if(data){
+                await locationSchema.findOneAndDelete({userId: message.author.id});
+            }
+            data = new locationSchema({
+                userId: message.author.id,
+                name: result.data.name,
+                lon: result.data.coord.lon,
+                lat: result.data.coord.lat
+            })
+            data.save();
+            message.channel.send(`Ustawiłeś nową domyślną lokację - ${result.data.name} | \`${result.data.coord.lon}, ${result.data.coord.lat}\``);
+        })
 	}
 }
 
 module.exports = {
 	run: execFunction,
-	name: "weather",
-	aliases: ["wt", "w"],
-	description: "Sprawdzenie pogody zależnie od miasta / koordynatów / kodu pocztowego oraz kodu państwa",
-	longDescription: `Sprawdza pogodę zależnie od podanych danych. Danymi mogą być: \`miejscowość\`, \`koordynaty x i y\`, \`kod pocztowy i kod państwa\` lub domyślna lokacja użytkownika.\nPrzykłady użycia:\n\`weather toruń\`\n\`weather 53.0 18.6\`\n\`weather 87-100 PL\`\n\`weather\``,
-	syntax: "<Dane>",
-	categoryId: 1,
+	name: "location",
+	aliases: ["l", "lc"],
+	description: "Ustawia domyślną lokację użytkownika lub sprawdza obecną",
+	syntax: "!<Lokacja>",
+	categoryId: 0,
 }

@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const prefixSchema = require("../models/prefix.js");
 
-const execFunction = (bot, message, args) => {
+const execFunction = async (bot, message, args) => {
     if(!args[0]){
         message.channel.send("Musisz podać prefix!");
         return;

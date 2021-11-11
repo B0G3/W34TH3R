@@ -11,7 +11,12 @@ const isNumeric = (str) => {
 const execFunction = async (bot, message, args) => {
 	let result;
 	if(!args[0]){
-		message.channel.send({content: "Musisz podać conajmniej jeden argument!"});
+		let location = await dataUtil.getUserLocation(message.author.id);
+		if(!location) message.channel.send({content: "Musisz podać conajmniej jeden argument lub ustawić domyślną lokację!"});
+		else{
+			let _args = [location.lat, location.lon];
+			execFunction(bot, message, _args);
+		}
 		return;
 	}else{
 		// Kiedy podajemy nazwe miejscowosci
@@ -50,6 +55,16 @@ const execFunction = async (bot, message, args) => {
 		else message.channel.send({content: `Wystąpił niespodziewany błąd`});
 	}else{
 		const cityInfo = result.data.city;
+		
+		let dailyForecast = await dataUtil.fetchForecastByCoords(cityInfo.coord.lat, cityInfo.coord.lon, true);
+		if(!dailyForecast.data){
+			message.channel.send({content: `Wystąpił niespodziewany błąd`});
+			return;
+		}
+
+		let frontEmbed = await embedUtil.forecastFrontEmbed(dailyForecast.data.daily, cityInfo);
+		embeds.push(frontEmbed);
+
 		while(result.data.list.length>0){
 			let day = result.data.list.splice(0, 8);
 			let embed = await embedUtil.forecastPageEmbed(day, cityInfo);
@@ -65,7 +80,7 @@ module.exports = {
 	name: "forecast",
 	aliases: ["fc", "f"],
 	description: "Sprawdzenie prognozy pogody (najbliższe 5 dni) zależnie od miasta / koordynatów / kodu pocztowego oraz kodu państwa",
-	longDescription: `Sprawdza prognozę pogody (najbliższe 5 dni) zależnie od podanych danych. Danymi mogą być: \`miejscowość\`, \`koordynaty x i y\`, \`kod pocztowy i kod państwa\`\nPrzykłady użycia:\n\`forecast toruń\`\n\`forecast 53.0 18.6\`\n\`forecast 87-100 PL\``,
+	longDescription: `Sprawdza prognozę pogody (najbliższe 5 dni) zależnie od podanych danych. Danymi mogą być: \`miejscowość\`, \`koordynaty x i y\`, \`kod pocztowy i kod państwa\` lub domyślna lokacja użytkownika.\nPrzykłady użycia:\n\`forecast toruń\`\n\`forecast 53.0 18.6\`\n\`forecast 87-100 PL\`\n\`forecast\``,
 	syntax: "<Dane>",
 	categoryId: 1,
 }

@@ -1,5 +1,6 @@
 const axios = require('axios');
 const botSettings = require("../botSettings.json");
+const locationSchema = require("../models/location.js");
 const QuickChart = require('quickchart-js');
 
 parseDate = (input) => {
@@ -20,7 +21,8 @@ module.exports = {
 			return { data: res.data }
 		}catch(err){
 			console.log(err);
-			return { data: err.response.data }
+			if(err.response) return { data: err.response.data }
+			else return { data: null }
 		}
 	},
 	fetchByCoords: async (x, y) => {
@@ -29,7 +31,8 @@ module.exports = {
 			return { data: res.data }
 		}catch(err){
 			console.log(err);
-			return { data: err.response.data }
+			if(err.response) return { data: err.response.data }
+			else return { data: null }
 		}
 	},
 	fetchByZip: async (zipCode, countryCode) => {
@@ -38,7 +41,8 @@ module.exports = {
 			return { data: res.data }
 		}catch(err){
 			console.log(err);
-			return { data: err.response.data }
+			if(err.response) return { data: err.response.data }
+			else return { data: null }
 		}
 	},
 	fetchForecastByCity: async (city) => {
@@ -47,16 +51,21 @@ module.exports = {
 			return { data: res.data }
 		}catch(err){
 			console.log(err);
-			return { data: err.response.data }
+			if(err.response) return { data: err.response.data }
+			else return { data: null }
 		}
 	},
-	fetchForecastByCoords: async (x, y) => {
+	fetchForecastByCoords: async (x, y, daily = false) => {
+		let link;
+		if(!daily) link = `https://api.openweathermap.org/data/2.5/forecast?lat=${x}&lon=${y}&units=metric&appid=${botSettings.owm_token}&lang=pl`
+		else link = `https://api.openweathermap.org/data/2.5/onecall?lat=${x}&lon=${y}&exclude=current,minutely,hourly&appid=${botSettings.owm_token}&lang=pl&units=metric`
 		try{
-			let res = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${x}&lon=${y}&units=metric&appid=${botSettings.owm_token}&lang=pl`);
+			let res = await axios.get(link);
 			return { data: res.data }
 		}catch(err){
 			console.log(err);
-			return { data: err.response.data }
+			if(err.response) return { data: err.response.data }
+			else return { data: null }
 		}
 	},
 	fetchForecastByZip: async (zipCode, countryCode, days = 5) => {
@@ -65,8 +74,21 @@ module.exports = {
 			return { data: res.data }
 		}catch(err){
 			console.log(err);
-			return { data: err.response.data }
+			if(err.response) return { data: err.response.data }
+			else return { data: null }
 		}
+	},
+	getUserLocation: async (_userId) => {
+		let location;
+
+		const data = await locationSchema.findOne({userId: _userId}).catch(err => {
+			console.log(err);
+		})
+	
+		if(data) location = {name: data.name, lon: data.lon, lat: data.lat};
+		else location = null;
+	 
+		return location;
 	},
 	fetchForecastChart: async (dayInfo) => {
 		temperatureArr = dayInfo.map(e => e.main.temp)

@@ -14,19 +14,15 @@ const bot = new Discord.Client({
 
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
-
-bot.prefix = async function(message){
+bot.prefix = async (message) => {
     let prefix;
 
     const data = await prefixSchema.findOne({guildId: message.guild.id}).catch(err => {
         console.log(err);
     })
 
-    if(data){
-        prefix = data.prefix;
-    }else{
-        prefix = botSettings.prefix;
-    }
+    if(data) prefix = data.prefix;
+    else prefix = botSettings.prefix;
  
     return prefix;
 }

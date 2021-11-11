@@ -5,8 +5,8 @@ const {categories} = require("../util/categoryUtil.js");
 
 const capitalize = (s) => (s && s[0].toUpperCase() + s.slice(1)) || ""
 
-const parseDate = (input) => {
-	const parts = input.match(/(\d+)/g);
+parseDate = (input) => {
+	let parts = input.match(/(\d+)/g);
 	return {
 		year: parts[0],
 		month: parts[1],
@@ -127,26 +127,56 @@ module.exports = {
         .addField(`Ciśnienie:`, `${data.main.pressure} hpa`, true)
         return embed;
     },
-    forecastPageEmbed: async (dayData, cityData) => {
-        const tempChart = await dataUtil.fetchForecastChart(dayData);
-        const tempArr = dayData.map(e => e.main.temp);
-        const humidityArr = dayData.map(e => e.main.humidity);
+    forecastFrontEmbed: async (daysInfo, cityData) => {
+        const dayNames = ['ndz.', 'pon.', 'wt.', 'śr.', 'czw.', 'pt.', 'sob.'];
+        let dayDescription = '';
+        let tempDescription = '';
+        let overallDescription = '';
+        for(i in daysInfo){
+            let day = daysInfo[i];
+            let date = new Date(day.dt * 1000);
+            let dayName = dayNames[date.getDay()];
+            //console.log(date);
+            dayDescription += `${date.getMonth()}-${date.getDate()} ${dayName}\n`
+            tempDescription += `${Math.round(day.temp.min,1)} do ${Math.round(day.temp.max,1)}\u00B0 C\n`
+            overallDescription += `${day.weather[0].description}\n`
+        }
+
+
+        const countryCode = cityData.country;
+        const cityName = cityData.name;
+        const embed = new Discord.MessageEmbed()
+        .setColor('#5865f2')
+        .setTitle(`Ogólna prognoza | ${cityName}, ${countryCode}`)
+        .addField(`Dzień`, dayDescription, true)
+        .addField(`Temp.`, tempDescription, true)
+        .addField(`Ogółem`, overallDescription, true)
+        .setDescription('')
+        return embed;
+    },
+    forecastPageEmbed: async (dayInfo, cityData) => {
+        const dayNames = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+        const tempChart = await dataUtil.fetchForecastChart(dayInfo);
+        const tempArr = dayInfo.map(e => e.main.temp);
+        const humidityArr = dayInfo.map(e => e.main.humidity);
 
         const avgTemp = calcAverage(tempArr);
         const avgHumidity = calcAverage(humidityArr);
 
         const countryCode = cityData.country;
         const cityName = cityData.name;
-        const dateString = dayData[0].dt_txt + ' \+ 24h';
+
+        const date = new Date(dayInfo[0].dt * 1000);
+        let dayName = dayNames[date.getDay()];
 
         const embed = new Discord.MessageEmbed()
         .setColor('#5865f2')
         .setTitle('Prognoza pogody'+ (countryCode?(` | ${cityName}, ${countries.getName(countryCode, 'pl', {select: "official"})}, ${countryCode}`):''))
-        .setThumbnail(`http://openweathermap.org/img/wn/${dayData[0].weather[0].icon}.png`)
+        .setThumbnail(`http://openweathermap.org/img/wn/${dayInfo[0].weather[0].icon}.png`)
         .addField(`Śr. temp:`, `${Math.round(avgTemp, 2)}\u00B0 C`, true)
         .addField(`Śr. wilg:`, `${Math.round(avgHumidity, 2)} %`, true)
-        .addField(`Ciśnienie:`, `${dayData[0].main.pressure} hPa`, true)
-        .setDescription(`**Data:** \`\`${dateString}\`\``)
+        .addField(`Ciśnienie:`, `${dayInfo[0].main.pressure} hPa`, true)
+        .setDescription(`**Data:** \`\`${dayName} ${date.getFullYear()}-${date.getMonth()}-${date.getDate()} + 24h\`\``)
         .setImage(tempChart)
         return embed;
     }
