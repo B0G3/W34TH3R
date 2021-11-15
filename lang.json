@@ -1,0 +1,345 @@
+{
+    "languages": ["polish", "english"],
+    "codes":{
+        "english": "en",
+        "polish": "pl"
+    },
+    "translations": {
+        "ERR_UNEXPECTED": {
+            "english": "An unexpected error occured",
+            "polish": "Wystąpił niespodziewany błąd"
+        },
+        "ERR_PHRASE_1": {
+            "english": "An error occured (code",
+            "polish": "Wystąpił błąd (kod"
+        },
+        "CMD_COUNTRIES_DESCRIPTION": {
+            "english": "Lists all possible country codes (Iso3166 standard)",
+            "polish": "Listuje dostępne kody krajów (Standard iso3166)"
+        },
+        "CMD_FORECAST_ERROR_1": {
+            "english": "You need to provide at least one argument or set the default location!",
+            "polish": "Musisz podać conajmniej jeden argument lub ustawić domyślną lokację!"
+        },
+        "CMD_FORECAST_ERROR_2": {
+            "english": "You need to provide at least two arguments!",
+            "polish": "Musisz podać conajmniej dwa argumenty!"
+        },
+        "CMD_FORECAST_ERROR_3": {
+            "english": "Invalid country code! You can list all the available country codes using `countries` command!",
+            "polish": "Błędny kod państwa! Dostępne kody sprawdzisz komendą `countries`!"
+        },
+        "CMD_FORECAST_DESCRIPTION": {
+            "english": "Checks weather forecast depending on city / coords / zip code and country code",
+            "polish": "Sprawdzenie prognozy pogody zależnie od miasta / koordynatów / kodu pocztowego oraz kodu państwa"
+        },
+        "CMD_FORECAST_DESCRIPTION_LONG": {
+            "english": "Checks weather forecast depending on provided arguments. Arguments can be: `city`, `coords`, `zip code and country code` or user's default location.\nUsage examples:\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`",
+            "polish": "Sprawdza prognozę pogody zależnie od podanych danych. Danymi mogą być: `miejscowość`, `koordynaty x i y`, `kod pocztowy i kod państwa` lub domyślna lokacja użytkownika.\nPrzykłady użycia:\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`"
+        },
+        "CMD_FORECAST_SYNTAX": {
+            "english": "<data>",
+            "polish": "<dane>"
+        },
+        "CMD_HELP_ERR1": {
+            "english": "Command not found.",
+            "polish": "Nie znaleziono komendy."
+        },
+        "CMD_HELP_AVAILABLE": {
+            "english": "Available commands:",
+            "polish": "Lista dostępnych komend:"
+        },
+        "CMD_HELP_DESCRIPTION": {
+            "english": "Checks available commands / details about the command",
+            "polish": "Sprawdzenie dostępnych komend / szczegółów poszczególnej komendy"
+        },
+        "CMD_HELP_SYNTAX": {
+            "english": "!<command name>",
+            "polish": "!<nazwa komendy>"
+        },
+        "CMD_LOCATION_RESPONSE_1": {
+            "english": "Your current location is",
+            "polish": "Twoja obecna domyślna lokacja to"
+        },
+        "CMD_LOCATION_ERROR_1": {
+            "english": "You haven't set the default location. You need to provide at least one argument!",
+            "polish": "Nie ustawiłeś domyślnej lokalizacji. Musisz podać conajmniej jeden argument!"
+        },
+        "CMD_LOCATION_ERROR_2": {
+            "english": "You need to specify at least two arguments!",
+            "polish": "Musisz podać conajmniej dwa argumenty!"
+        },
+        "CMD_LOCATION_ERROR_3": {
+            "english": "Invalid country code! You can list all the available country codes using `countries` command!",
+            "polish": "Błędny kod państwa! Dostępne kody sprawdzisz komendą `countries`!"
+        },
+        "CMD_LOCATION_SUCCESS": {
+            "english": "You've set new default location",
+            "polish": "Ustawiłeś nową domyślną lokację"
+        },
+        "CMD_LOCATION_DESCRIPTION": {
+            "english": "Sets default user location or checks the current one",
+            "polish": "Ustawia domyślną lokację użytkownika lub sprawdza obecną"
+        },
+        "CMD_LOCATION_SYNTAX": {
+            "english": "!<location>",
+            "polish": "!<lokacja>"
+        },
+        "CMD_RESETPREFIX_SUCCESS": {
+            "english": "The prefix has been set to default!",
+            "polish": "Ustawiono domyślny prefix!"
+        },
+        "CMD_RESETPREFIX_FAILURE": {
+            "english": "The prefix is already set to default!",
+            "polish": "Domyślny prefix jest już ustawiony!"
+        },
+        "CMD_RESETPREFIX_DESCRIPTION": {
+            "english": "Sets the default bot prefix to default",
+            "polish": "Resetuje własny prefix"
+        },
+        "CMD_SETLANG_ERROR_1": {
+            "english": "You need to provide language!",
+            "polish": "Musisz podać język!"
+        },
+        "CMD_SETLANG_ERROR_2": {
+            "english": "Provided language is not supported.",
+            "polish": "Podany język nie jest wspomagany."
+        },
+        "CMD_SETLANG_SUCCESS": {
+            "english": "Language has been set!",
+            "polish": "Ustawiono nowy język!"
+        },
+        "CMD_SETLANG_DESCRIPTION": {
+            "english": "Sets bot's language",
+            "polish": "Ustawia język bota"
+        },
+        "CMD_SETLANG_SYNTAX": {
+            "english": "<language>",
+            "polish": "<język>"
+        },
+        "CMD_SETPREFIX_ERROR_1": {
+            "english": "You need to provide prefix!",
+            "polish": "Musisz podać prefix!"
+        },
+        "CMD_SETPREFIX_SUCCESS": {
+            "english": "A new prefix has been set!",
+            "polish": "Ustawiono nowy prefix!"
+        },
+        "CMD_SETPREFIX_DESCRIPTION": {
+            "english": "Sets bot's prefix",
+            "polish": "Ustawia własny prefix bota"
+        },  
+        "CMD_SETPREFIX_SYNTAX": {
+            "english": "<prefix>",
+            "polish": "<prefix>"
+        },  
+        "CMD_WEATHER_ERROR_1": {
+            "english": "You need to provide at least one argument or set the default location!",
+            "polish": "Musisz podać conajmniej jeden argument lub ustawić domyślną lokację!"
+        },
+        "CMD_WEATHER_ERROR_2": {
+            "english": "You need to provide at least two arguments!",
+            "polish": "Musisz podać conajmniej dwa argumenty!"
+        }, 
+        "CMD_WEATHER_ERROR_3": {
+            "english": "Invalid country code! You can list all the available country codes using `countries` command!",
+            "polish": "Błędny kod państwa! Dostępne kody sprawdzisz komendą `countries`!"
+        },        
+        "CMD_WEATHER_DESCRIPTION": {
+            "english": "Checks weather depending on city / coords / zip code and country code",
+            "polish": "Sprawdzenie pogodę zależnie od miasta / koordynatów / kodu pocztowego oraz kodu państwa"
+        },
+        "CMD_WEATHER_DESCRIPTION_LONG": {
+            "english": "Checks weather depending on provided arguments. Arguments can be: `city`, `coords`, `zip code and country code` or user's default location.\nUsage examples:\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`",
+            "polish": "Sprawdza pogodę zależnie od podanych danych. Danymi mogą być: `miejscowość`, `koordynaty x i y`, `kod pocztowy i kod państwa` lub domyślna lokacja użytkownika.\nPrzykłady użycia:\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`"
+        },  
+        "CMD_WEATHER_SYNTAX": {
+            "english": "<data>",
+            "polish": "<dane>"
+        },
+        "EMBED_PAGE_BTN_END": {
+            "english": "HIDE",
+            "polish": "UKRYJ"
+        },
+        "EMBED_PAGE_WAIT": {
+            "english": "Please wait...",
+            "polish": "Proszę czekać..."
+        },
+        "EMBED_PAGE_ERROR_1": {
+            "english": "You can't use this embed!",
+            "polish": "Nie możesz tego użyć!"
+        },
+        "EMBED_PAGE_PAGE": {
+            "english": "Page",
+            "polish": "Strona"
+        },
+        "EMBED_HELP_CATEGORY": {
+            "english": "Category",
+            "polish": "Kategoria"
+        },
+        "EMBED_HELP_SYNTAX": {
+            "english": "Syntax",
+            "polish": "Syntax"
+        },
+        "EMBED_HELP_ALIASES": {
+            "english": "Aliases",
+            "polish": "Aliasy"
+        },
+        "EMBED_HELP_COMMAND": {
+            "english": "Command",
+            "polish": "Komenda"
+        },
+        "EMBED_COUNTRYLIST_COUNTRIES": {
+            "english": "Available countries",
+            "polish": "Dostępne kraje"
+        },
+        "EMBED_COUNTRYLIST_CALLER": {
+            "english": "Called by",
+            "polish": "Wywołane przez"
+        },
+        "EMBED_WEATHER_TEMPERATURE": {
+            "english": "Temperature",
+            "polish": "Temperatura"
+        },
+        "EMBED_WEATHER_TEMP_MAX": {
+            "english": "Temp max",
+            "polish": "Temp max"
+        },
+        "EMBED_WEATHER_TEMP_MIN": {
+            "english": "Temp min",
+            "polish": "Temp min"
+        },
+        "EMBED_WEATHER_HUMIDITY": {
+            "english": "Humidity",
+            "polish": "Wilgotność"
+        },
+        "EMBED_WEATHER_WIND": {
+            "english": "Wind",
+            "polish": "Wiatr"
+        },
+        "EMBED_WEATHER_PRESSURE": {
+            "english": "Pressure",
+            "polish": "Ciśnienie"
+        },
+        "EMBED_FORECASTFRONT_TO": {
+            "english": "to",
+            "polish": "do"
+        },
+        "EMBED_FORECASTFRONT_OVERALL_1": {
+            "english": "Overall forecast",
+            "polish": "Ogólna prognoza"
+        },
+        "EMBED_FORECASTFRONT_DAY": {
+            "english": "Day",
+            "polish": "Dzień"
+        },
+        "EMBED_FORECASTFRONT_TEMP": {
+            "english": "Temp.",
+            "polish": "Temp."
+        },
+        "EMBED_FORECASTFRONT_OVERALL_2": {
+            "english": "Overall",
+            "polish": "Ogółem"
+        },
+        "EMBED_FORECASTPAGE_FORECAST": {
+            "english": "Weather forecast",
+            "polish": "Prognoza pogody"
+        },
+        "EMBED_FORECASTPAGE_AVG_TEMP": {
+            "english": "Avg. temp",
+            "polish": "Śr. temp"
+        },
+        "EMBED_FORECASTPAGE_AVG_HUM": {
+            "english": "Avg. hum",
+            "polish": "Śr. wilg"
+        },
+        "EMBED_FORECASTPAGE_PRESSURE": {
+            "english": "Pressure",
+            "polish": "Ciśnienie"
+        },
+        "EMBED_FORECASTPAGE_DATE": {
+            "english": "Date",
+            "polish": "Data"
+        },
+        "EMBED_FORECASTPAGE_TEMPERATURE": {
+            "english": "Temperature",
+            "polish": "Temperatura"
+        },
+        "EMBED_FORECASTPAGE_HUMIDITY": {
+            "english": "Humidity",
+            "polish": "Wilgotność"
+        },
+        "DAY_SHORT_SUNDAY":{
+            "english": "su",
+            "polish": "ndz"
+        },
+        "DAY_SHORT_MONDAY":{
+            "english": "mo",
+            "polish": "pon"
+        },
+        "DAY_SHORT_TUESDAY":{
+            "english": "tu",
+            "polish": "wt"
+        },
+        "DAY_SHORT_WEDNESDAY":{
+            "english": "we",
+            "polish": "śr"
+        },
+        "DAY_SHORT_THURSDAY":{
+            "english": "th",
+            "polish": "czw"
+        },
+        "DAY_SHORT_FRIDAY":{
+            "english": "fr",
+            "polish": "pt"
+        },
+        "DAY_SHORT_SATURDAY":{
+            "english": "sa",
+            "polish": "sob"
+        },
+        "DAY_SUNDAY":{
+            "english": "sunday",
+            "polish": "niedziela"
+        },
+        "DAY_MONDAY":{
+            "english": "monday",
+            "polish": "poniedziałek"
+        },
+        "DAY_TUESDAY":{
+            "english": "tuesday",
+            "polish": "wtorek"
+        },
+        "DAY_WEDNESDAY":{
+            "english": "wednesday",
+            "polish": "środa"
+        },
+        "DAY_THURSDAY":{
+            "english": "thursday",
+            "polish": "czwartek"
+        },
+        "DAY_FRIDAY":{
+            "english": "friday",
+            "polish": "piątek"
+        },
+        "DAY_SATURDAY":{
+            "english": "saturday",
+            "polish": "sobota"
+        },
+        "CATEGORY_HELP":{
+            "english": "Help",
+            "polish": "Pomocnicze"
+        },
+        "CATEGORY_WEATHER":{
+            "english": "Weather",
+            "polish": "Pogodynka"
+        },
+        "CATEGORY_STATS":{
+            "english": "Statistics",
+            "polish": "Statystyki"
+        },
+        "CATEGORY_CONFIG":{
+            "english": "Configuration",
+            "polish": "Ustawienia"
+        }
+    }
+}

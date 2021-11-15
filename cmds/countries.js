@@ -1,7 +1,7 @@
-const Discord = require('discord.js');
 const countries = require("i18n-iso-countries");
 const embedUtil = require("../util/embedUtil.js");
-const {iso3166} = require("../util/countryCodes.js");
+const {iso3166} = require("../countryCodes.json");
+const {getPhrase, getCode} = require("../util/languageUtil.js");
 
 const execFunction = async (bot, message, args) => {
 	const countryCodes = [...iso3166];
@@ -17,10 +17,10 @@ const execFunction = async (bot, message, args) => {
 		description = "";
 
 		for(c of chunk){
-			let countryName = countries.getName(c, "pl");
+			let countryName = countries.getName(c, getCode(message.guild));
 			description += `\:flag_${c.toLowerCase()}: ${countryName} (${c}) `;
 		}
-		embed = embedUtil.countryListEmbed(message.author, description, p, pages);
+		embed = embedUtil.countryListEmbed(message, description, p, pages);
 		embedList.push(embed);
 		p++;
 	}
@@ -32,7 +32,7 @@ module.exports = {
 	run: execFunction,
 	name: "countries",
 	aliases: ["ct", "c", "iso3166"],
-	description: "Listuje dostępne kody krajów (Standard iso3166)",
+	description: "CMD_COUNTRIES_DESCRIPTION",
 	syntax: null,
 	categoryId: 0,
 }

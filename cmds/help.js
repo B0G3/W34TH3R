@@ -1,16 +1,17 @@
 const Discord = require('discord.js');
 const embedUtil = require("../util/embedUtil.js");
-const {categories} = require("../util/categoryUtil.js");
+const categories = require("../categories.json");
+const {getPhrase} = require("../util/languageUtil.js");
 
 const execFunction = async (bot, message, args) => {
 	if(args[0]){
 		let cmd = bot.commands.get(args[0]) || bot.commands.get(bot.aliases.get(args[0]));
 		if(!cmd){
-			message.channel.send("Nie znaleziono komendy.");
+			message.channel.send(getPhrase(message.guild, "CMD_HELP_ERR1"));
 			return;
 		}
 
-		let embed = embedUtil.helpEmbed(cmd);
+		let embed = embedUtil.helpEmbed(message, cmd);
 		await message.channel.send({embeds: [embed]});
 
 		return;
@@ -24,18 +25,18 @@ const execFunction = async (bot, message, args) => {
 
 	const helpEmbed = new Discord.MessageEmbed()
 	.setColor(`#cb4b16`)
-	.setTitle(`**Lista dostępnych komend:**`)
+	.setTitle(`**${getPhrase(message.guild, "CMD_HELP_AVAILABLE")}**`)
 	
 	for(e in categories){
 		let sum = '';
 		sortedCommands[e].forEach(el => {
 			if(!el.hidden){
-				let syntax = (el.syntax!=null)?` ${el.syntax}`:'';
-				sum = sum + `[${el.name}]${syntax} - ${el.description}\n`
+				let syntax = (el.syntax!=null)?` ${getPhrase(message.guild, el.syntax)}`:'';
+				sum = sum + `[${el.name}]${syntax} - ${getPhrase(message.guild, el.description)}\n`
 			}
 		});
 		helpEmbed.addFields(
-			{ name: `${categories[e].icon} ${categories[e].name}`, value: "```CSS\n"+sum+"```"}
+			{ name: `${categories[e].icon} ${getPhrase(message.guild, categories[e].name)}`, value: "```CSS\n"+sum+"```"}
 		)
 	}
 	message.channel.send({embeds: [helpEmbed]});
@@ -45,7 +46,15 @@ module.exports = {
 	run: execFunction,
 	name: "help",
 	aliases: ["h"],
-	description: "Sprawdzenie dostępnych komend / szczegółów poszczególnej komendy",
-	syntax: "!<Nazwa komendy>",
+	description: "CMD_HELP_DESCRIPTION",
+	syntax: "CMD_HELP_SYNTAX",
 	categoryId: 0,
+	slashOptions: [
+		{
+			description: "Command to check help for",
+			name: "command_name",
+			type: "STRING",
+			required: false
+		},
+	]
 }

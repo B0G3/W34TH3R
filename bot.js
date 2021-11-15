@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const botSettings = require("./botSettings.json");
 const prefixSchema = require("./models/prefix.js");
+const languageUtil = require("./util/languageUtil.js")
 const mongoose = require("mongoose");
 const fs = require("fs");
 
@@ -27,30 +28,46 @@ bot.prefix = async (message) => {
     return prefix;
 }
 
-fs.readdir("./cmds/", (err, files) => {
-    if(err) console.error(err);
-
-    let jsfiles = files.filter(f => f.split(".").pop() === "js");
-    if(jsfiles.length <= 0) {
-        console.log("No commands to load!")
-        return;
+loadCommands = (guild = null) => {
+    let slashCommands;
+    if(guild) {
+        slashCommands = guild.commands
+    } else {
+        commands = bot.application?.commands;
     }
-    console.log(`Loading custom commands:`)
-    jsfiles.forEach((f,i) => {
-        let props = require(`./cmds/${f}`);
+    fs.readdir("./cmds/", (err, files) => {
+        if(err) console.error(err);
 
-        try{
-            console.log(`- ${f} loaded!`)
-            bot.commands.set(props.name, props);
-
-            props.aliases.forEach(alias => {
-                bot.aliases.set(alias, props.name);
-            })
-        }catch(err){
-            return console.log(err);
+        let jsfiles = files.filter(f => f.split(".").pop() === "js");
+        if(jsfiles.length <= 0) {
+            console.log("No commands to load!")
+            return;
         }
+        console.log(`Loading custom commands:`)
+        jsfiles.forEach((f,i) => {
+            let props = require(`./cmds/${f}`);
+
+            try{
+                console.log(`- ${f} loaded!`)
+                bot.commands.set(props.name, props);
+                
+                if (props.slashOptions){
+                    slashCommands?.create({
+                        name: props.name,
+                        description: languageUtil.getEnglishPhrase(props.description),
+                        options: props.slashOptions?props.slashOptions:null
+                    })
+                }
+
+                props.aliases.forEach(alias => {
+                    bot.aliases.set(alias, props.name);
+                })
+            }catch(err){
+                return console.log(err);
+            }
+        });
     });
-});
+}
 
 mongoose.connect(botSettings.mongodb_srv, {
     useNewUrlParser: true,
@@ -63,7 +80,14 @@ mongoose.connect(botSettings.mongodb_srv, {
 })
 
 bot.on("ready", () => {
+    const guildId = '838462696046985236';
+    const guild = bot.guilds.cache.get(guildId);
+
+    languageUtil.loadLanguages(bot);
+    loadCommands(guild);
+
     console.log('Ready!');
+    
 
     /*
     let inviteLink = bot.generateInvite({
@@ -76,6 +100,36 @@ bot.on("ready", () => {
     console.log(inviteLink);
     */
 });
+
+parseSlashArguments = (data, argArray) => {
+    data.forEach(e => {
+        if(e.value) argArray.push(e.value.toString());
+        else{
+            if(e.options) parseSlashArguments(e.options, argArray);
+        }
+    });
+}
+
+bot.on("interactionCreate", async (interaction) => {
+    if (!interaction.isCommand()) return;
+
+    const { commandName, options } = interaction;
+
+    let cmd = bot.commands.get(commandName);
+    if(!cmd) return;
+
+    let args = [];
+    parseSlashArguments(options.data, args);
+
+    let message = interaction;
+    message.author = interaction.user;
+
+    let prefix = await bot.prefix(message);
+    interaction.reply({content: `${prefix}${commandName} ${args.join(' ')}`});
+    cmd.run(bot, message, args);
+    
+
+})
 
 bot.on("messageCreate", async message => {
     if(message.author.bot) return;

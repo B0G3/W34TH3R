@@ -1,0 +1,18 @@
+{
+    "0": {
+        "name": "CATEGORY_HELP",
+        "icon": ":grey_question:"
+    },
+    "1": {
+        "name": "CATEGORY_WEATHER",
+        "icon": ":thunder_cloud_rain:"
+    },
+    "2": {
+        "name": "CATEGORY_STATS",
+        "icon": ":bar_chart:"
+    },
+    "3": {
+        "name": "CATEGORY_CONFIG",
+        "icon": ":screwdriver:"
+    }
+}

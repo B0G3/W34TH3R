@@ -1,13 +1,13 @@
-const Discord = require('discord.js');
 const prefixSchema = require("../models/prefix.js");
+const {getPhrase} = require("../util/languageUtil.js");
 
 const execFunction = async (bot, message, args) => {
     if(!args[0]){
-        message.channel.send("Musisz podać prefix!");
+        message.channel.send(getPhrase(message.guild, "CMD_SETPREFIX_ERROR_1"));
         return;
     }else{
         if(args[0].length>5){
-            message.channel.send("Długość prefixu nie może przekraczać 5 znaków!");
+            message.channel.send(getPhrase(message.guild, "CMD_SETPREFIX_ERROR_2"));
             return;
         }
     }
@@ -21,7 +21,7 @@ const execFunction = async (bot, message, args) => {
             prefix: args[0]
         })
         data.save();
-        message.channel.send(`Ustawiono nowy prefix! **(${args[0]})**`);
+        message.channel.send(`${getPhrase(message.guild, "CMD_SETPREFIX_SUCCESS")} **(${args[0]})**`);
     })
 }
 
@@ -30,7 +30,15 @@ module.exports = {
 	name: "setprefix",
 	aliases: ["setp", "sp"],
     adminOnly: true,
-	description: "Ustawia własny prefix bota dla danego serwera",
-	syntax: "<Prefix>",
+	description: "CMD_SETPREFIX_DESCRIPTION",
+	syntax: "CMD_SETPREFIX_SYNTAX",
 	categoryId: 3,
+	slashOptions: [
+		{
+			description: "Prefix to set",
+			name: "prefix",
+			type: "STRING",
+			required: true
+		},
+	]
 }
