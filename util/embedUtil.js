@@ -4,6 +4,7 @@ const dataUtil = require("../util/dataUtil.js");
 const categories = require("../categories.json");
 const {getPhrase, getCode} = require("../util/languageUtil.js");
 const lang = require('../lang.json')
+const moment = require('moment');
 
 const capitalize = (s) => (s && s[0].toUpperCase() + s.slice(1)) || ""
 
@@ -82,7 +83,7 @@ module.exports = {
     },
     helpEmbed: (message, cmd) => {
         const embed = new Discord.MessageEmbed()
-        .setColor('#cb4b16')
+        .setColor('#f7d257')
         .setTitle(`\:information_source: | ${cmd.name.toUpperCase()}`)
         .addField(`${getPhrase(message.guild, "EMBED_HELP_CATEGORY")}:`, `\`\`\`${getPhrase(message.guild, categories[cmd.categoryId].name)}\`\`\``, false)
         .addField(`${getPhrase(message.guild, "EMBED_HELP_ALIASES")}:`, `\`\`\`${cmd.aliases.join(', ')}\`\`\``, false)
@@ -119,7 +120,7 @@ module.exports = {
     languageListEmbed: (message) => {
         const embed = new Discord.MessageEmbed()
         .setColor('#3ba55d')
-        .setTitle(getPhrase(message.guild, "CMD_LANG_RESPONSE"))
+        .setTitle('\:speech_balloon: ' + getPhrase(message.guild, "CMD_LANG_RESPONSE"))
         
         let description = '';
 
@@ -131,6 +132,22 @@ module.exports = {
 
         return embed;
     },
+    botStatsEmbed: (message, stats) => {
+        const embed = new Discord.MessageEmbed()
+        .setColor('#f7d257')
+        .setTitle('\:chart_with_downwards_trend: Statystyki globalne')
+        .addField(`Sprawdzeń pogody:`, `\`\`\`${stats.weatherCheckCount}\`\`\``, true)
+        .addField(`Najpopularniejsza komenda:`, `\`\`\`${stats.topCommand}\`\`\``, true)
+        .addField(`Użytych komend:`, `\`\`\`${stats.commandUseCount}\`\`\``, true)
+        .addField(`Najaktywniejszy użytkownik:`, `\`\`\`${stats.topUser.username}\`\`\``, true)
+        .addField(`Najaktywniejszy serwer:`, `\`\`\`${stats.topGuild}\`\`\``, true)
+        .addField(`Ilość serwerów:`, `\`\`\`${stats.serverCount}\`\`\``, true)
+        .addField(`Data dołączenia bota:`, `\`\`\`${moment(stats.joinDate).format('YYYY-MM-DD HH:mm')}\`\`\``, true)
+        
+        //embed.setDescription('asdsadas');
+
+        return embed;
+    },
     weatherEmbed: async (message, data, _countryData = null) => {
         let countryInfo = '';
         let countryCode = (_countryData!=null)?_countryData.country:data.sys.country;
@@ -139,31 +156,27 @@ module.exports = {
         const sunrise = new Date(data.sys.sunrise * 1000);
         const sunset = new Date(data.sys.sunset * 1000);
 
-        function formatDate(date){
-            return date.getHours() + ':' + ("0" + date.getMinutes()).substr(-2);
-        }
-
         const sunriseUTC = new Date(sunrise.getTime() + sunrise.getTimezoneOffset() * 60000);
         const sunsetUTC = new Date(sunset.getTime() + sunset.getTimezoneOffset() * 60000);
 
         const sunriseLocal = new Date(sunriseUTC.getTime() + (1000 * data.timezone));
         const sunsetLocal = new Date(sunsetUTC.getTime() + (1000 * data.timezone));
 
-        console.log(data);
-
+        const GMT = (data.timezone<0)?(data.timezone/3600):(`+${data.timezone/3600}`);
+    
         const embed = new Discord.MessageEmbed()
         .setColor('#5865f2')
         .setAuthor(capitalize(data.weather[0].description))
         .setThumbnail(`http://openweathermap.org/img/wn/${data.weather[0].icon}.png`)
         .setDescription((_countryData!=null)?_countryData.name:data.name + countryInfo)
-        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_TEMPERATURE")}:`, `${data.main.temp}\u00B0 C`, true)
-        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_TEMP_MAX")}:`, `${data.main.temp_max}\u00B0 C`, true)
-        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_TEMP_MIN")}:`, `${data.main.temp_min}\u00B0 C`, true)
-        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_HUMIDITY")}:`, `${data.main.humidity} %`, true)
-        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_WIND")}:`, `${data.wind.speed} m/s`, true)
-        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_PRESSURE")}:`, `${data.main.pressure} hpa`, true)
-        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_SUNRISE")}:`, `${formatDate(sunriseUTC)} UTC\n${formatDate(sunriseLocal)} GMT ${data.timezone/3600}:00`, true)
-        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_SUNSET")}:`, `${formatDate(sunsetUTC)} UTC\n${formatDate(sunsetLocal)} GMT ${data.timezone/3600}:00`, true)
+        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_TEMPERATURE")}:`, `\`\`\`${data.main.temp}\u00B0 C\`\`\``, true)
+        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_TEMP_MAX")}:`, `\`\`\`${data.main.temp_max}\u00B0 C\`\`\``, true)
+        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_TEMP_MIN")}:`, `\`\`\`${data.main.temp_min}\u00B0 C\`\`\``, true)
+        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_HUMIDITY")}:`, `\`\`\`${data.main.humidity} %\`\`\``, true)
+        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_WIND")}:`, `\`\`\`${data.wind.speed} m/s\`\`\``, true)
+        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_PRESSURE")}:`, `\`\`\`${data.main.pressure} hpa\`\`\``, true)
+        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_SUNRISE")}:`, `\`\`\`${moment(sunriseUTC).format('HH:mm')} UTC\n${moment(sunriseLocal).format('HH:mm')} GMT${GMT}\`\`\``, true)
+        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_SUNSET")}:`, `\`\`\`${moment(sunsetUTC).format('HH:mm')} UTC\n${moment(sunsetLocal).format('HH:mm')} GMT${GMT}\`\`\``, true)
         return embed;
     },
     forecastFrontEmbed: async (message, daysInfo, cityData) => {
@@ -174,7 +187,7 @@ module.exports = {
             let day = daysInfo[i];
             let date = new Date(day.dt * 1000);
             let dayName = getPhrase(message.guild, dataUtil.getDayNameShort(date.getDay())) + ".";
-            dayDescription += `${date.getMonth()}-${date.getDate()} ${dayName}\n`
+            dayDescription += `${dayName} ${moment(date).format('MM-DD')}\n`
             tempDescription += `${Math.round(day.temp.min,1)} ${getPhrase(message.guild, "EMBED_FORECASTFRONT_TO")} ${Math.round(day.temp.max,1)}\u00B0 C\n`
             overallDescription += `${day.weather[0].description}\n`
         }
@@ -184,9 +197,9 @@ module.exports = {
         const embed = new Discord.MessageEmbed()
         .setColor('#5865f2')
         .setTitle(`${getPhrase(message.guild, "EMBED_FORECASTFRONT_OVERALL_1")} | ${cityName}, ${countryCode}`)
-        .addField(`${getPhrase(message.guild, "EMBED_FORECASTFRONT_DAY")}`, dayDescription, true)
-        .addField(`${getPhrase(message.guild, "EMBED_FORECASTFRONT_TEMP")}`, tempDescription, true)
-        .addField(`${getPhrase(message.guild, "EMBED_FORECASTFRONT_OVERALL_2")}`, overallDescription, true)
+        .addField(`**${getPhrase(message.guild, "EMBED_FORECASTFRONT_DAY")}**`, `\`\`\`${dayDescription}\`\`\``, true)
+        .addField(`**${getPhrase(message.guild, "EMBED_FORECASTFRONT_TEMP")}**`, `\`\`\`${tempDescription}\`\`\``, true)
+        .addField(`**${getPhrase(message.guild, "EMBED_FORECASTFRONT_OVERALL_2")}**`, `\`\`\`${overallDescription}\`\`\``, true)
         .setDescription('')
         return embed;
     },
@@ -204,10 +217,6 @@ module.exports = {
         const sunrise = new Date(cityData.sunrise * 1000);
         const sunset = new Date(cityData.sunset * 1000);
 
-        function formatDate(date){
-            return date.getHours() + ':' + ("0" + date.getMinutes()).substr(-2);
-        }
-
         const sunriseUTC = new Date(sunrise.getTime() + sunrise.getTimezoneOffset() * 60000);
         const sunsetUTC = new Date(sunset.getTime() + sunset.getTimezoneOffset() * 60000);
 
@@ -217,16 +226,20 @@ module.exports = {
         const date = new Date(dayInfo[0].dt * 1000);
         let dayName = capitalize(getPhrase(message.guild, dataUtil.getDayName(date.getDay())));
 
+        const GMT = (cityData.timezone<0)?(cityData.timezone/3600):(`+${cityData.timezone/3600}`);
+
         const embed = new Discord.MessageEmbed()
         .setColor('#5865f2')
         .setTitle(getPhrase(message.guild, "EMBED_FORECASTPAGE_FORECAST") + (countryCode?(` | ${cityName}, ${countries.getName(countryCode, getCode(message.guild), {select: "official"})}, ${countryCode}`):''))
         .setThumbnail(`http://openweathermap.org/img/wn/${dayInfo[0].weather[0].icon}.png`)
         .addField(`${getPhrase(message.guild, "EMBED_FORECASTPAGE_AVG_TEMP")}:`, `\`\`\`${Math.round(avgTemp, 2)}\u00B0 C\`\`\``, true)
+        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_TEMP_MAX")}:`, `\`\`\`${dayInfo[0].main.temp_max}\u00B0 C\`\`\``, true)
+        .addField(`${getPhrase(message.guild, "EMBED_WEATHER_TEMP_MIN")}:`, `\`\`\`${dayInfo[0].main.temp_min}\u00B0 C\`\`\``, true)
         .addField(`${getPhrase(message.guild, "EMBED_FORECASTPAGE_AVG_HUM")}:`, `\`\`\`${Math.round(avgHumidity, 2)} %\`\`\``, true)
         .addField(`${getPhrase(message.guild, "EMBED_FORECASTPAGE_PRESSURE")}:`, `\`\`\`${dayInfo[0].main.pressure} hPa\`\`\``, true)
-        .addField(`${getPhrase(message.guild, "EMBED_FORECASTPAGE_SUNRISE")}:`, `\`\`\`${formatDate(sunriseUTC)} UTC\n${formatDate(sunriseLocal)} GMT ${cityData.timezone/3600}:00\`\`\``, true)
-        .addField(`${getPhrase(message.guild, "EMBED_FORECASTPAGE_SUNSET")}:`, `\`\`\`${formatDate(sunsetUTC)} UTC\n${formatDate(sunsetLocal)} GMT ${cityData.timezone/3600}:00\`\`\``, true)
-        .setDescription(`**${getPhrase(message.guild, "EMBED_FORECASTPAGE_DATE")}:** \`\`${dayName} ${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:00 + 24h\`\``)
+        .addField(`${getPhrase(message.guild, "EMBED_FORECASTPAGE_SUNRISE")}:`, `\`\`\`${moment(sunriseUTC).format('HH:mm')} UTC\n${moment(sunriseLocal).format('HH:mm')} GMT${GMT}\`\`\``, false)
+        .addField(`${getPhrase(message.guild, "EMBED_FORECASTPAGE_SUNSET")}:`, `\`\`\`${moment(sunsetUTC).format('HH:mm')} UTC\n${moment(sunsetLocal).format('HH:mm')} GMT${GMT}\`\`\``, true)
+        .setDescription(`**${getPhrase(message.guild, "EMBED_FORECASTPAGE_DATE")}:** \`\`${dayName} ${moment(date).format('YYYY-MM-DD HH')}:00 + 24h\`\``)
         .setImage(tempChart)
         return embed;
     }

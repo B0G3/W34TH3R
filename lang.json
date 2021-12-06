@@ -56,8 +56,8 @@
             "polish": "Sprawdzenie prognozy pogody zależnie od miasta / koordynatów / kodu pocztowego oraz kodu państwa"
         },
         "CMD_FORECAST_DESCRIPTION_LONG": {
-            "english": "Checks weather forecast depending on provided arguments. Arguments can be: `city`, `coords`, `zip code and country code` or user's default location.\nUsage examples:\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`",
-            "polish": "Sprawdza prognozę pogody zależnie od podanych danych. Danymi mogą być: `miejscowość`, `koordynaty x i y`, `kod pocztowy i kod państwa` lub domyślna lokacja użytkownika.\nPrzykłady użycia:\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`"
+            "english": "Checks weather forecast depending on provided arguments. Arguments can be: `city`, `coords`, `zip code and country code` or user's default location.\n\n**Usage examples:**\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`",
+            "polish": "Sprawdza prognozę pogody zależnie od podanych danych. Danymi mogą być: `miejscowość`, `koordynaty x i y`, `kod pocztowy i kod państwa` lub domyślna lokacja użytkownika.\n\n**Przykłady użycia:**\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`"
         },
         "CMD_FORECAST_SYNTAX": {
             "english": "<data>",
@@ -180,8 +180,8 @@
             "polish": "Sprawdzenie pogodę zależnie od miasta / koordynatów / kodu pocztowego oraz kodu państwa"
         },
         "CMD_WEATHER_DESCRIPTION_LONG": {
-            "english": "Checks weather depending on provided arguments. Arguments can be: `city`, `coords`, `zip code and country code` or user's default location.\nUsage examples:\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`",
-            "polish": "Sprawdza pogodę zależnie od podanych danych. Danymi mogą być: `miejscowość`, `koordynaty x i y`, `kod pocztowy i kod państwa` lub domyślna lokacja użytkownika.\nPrzykłady użycia:\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`"
+            "english": "Checks weather depending on provided arguments. Arguments can be: `city`, `coords`, `zip code and country code` or user's default location.\n\n**Usage examples:**\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`",
+            "polish": "Sprawdza pogodę zależnie od podanych danych. Danymi mogą być: `miejscowość`, `koordynaty x i y`, `kod pocztowy i kod państwa` lub domyślna lokacja użytkownika.\n\n**Przykłady użycia:**\n`forecast toruń`\n`forecast 53.0 18.6`\n`forecast 87-100 PL`\n`forecast`"
         },  
         "CMD_WEATHER_SYNTAX": {
             "english": "<data>",
@@ -318,6 +318,10 @@
         "EMBED_FORECASTPAGE_SUNSET": {
             "english": "Sunset",
             "polish": "Zachód słońca"
+        },
+        "EMBED_FORECASTPAGE_PRECIPITATION": {
+            "english": "Precipitation chance",
+            "polish": "Szansa opadów"
         },
         "DAY_SHORT_SUNDAY":{
             "english": "su",

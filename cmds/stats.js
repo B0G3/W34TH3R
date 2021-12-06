@@ -1,6 +1,6 @@
 const statSchema = require("../models/stat.js");
+const embedUtil = require("../util/embedUtil.js");
 const {getPhrase} = require('../util/languageUtil.js')
-
 
 const execFunction = async (bot, message, args) => {
 	const weatherCheckCount = (await statSchema.aggregate([
@@ -30,29 +30,47 @@ const execFunction = async (bot, message, args) => {
 			$project: { _id: 0 }
 		}
 	]))[0]?.sum;
-	const topUser = (await statSchema.aggregate(
+	const topUserId = (await statSchema.aggregate(
 		[
 		  {
 			$group:
-			  {
+			{
 				_id: "$userId",
 				usages: { $sum: "$usages" }
-			  }
+			}
 		  }
 		]
-	 ).sort({usages:-1}).limit(1))[0]?._id;
-	//pogode sprawdzono laczie x razy
-	//bot znajduje sie na x serwerach
-	//najczesciej uzywana globalnie komenda to
-	//lacznie wywolano x komend
+	).sort({usages:-1}).limit(1))[0]?._id;
 
-	// used commands, most used command, top user, guild amount
+	const topGuildId = (await statSchema.aggregate(
+		[
+		  {
+			$group:
+			{
+				_id: "$guildId",
+				usages: { $sum: "$usages" }
+			}
+		  }
+		]
+	).sort({usages:-1}).limit(1))[0]?._id;
 
-	console.log(weatherCheckCount);
-	console.log(serverCount);
-	console.log(topCommand);
-	console.log(commandUseCount);
-	console.log(topUser);
+	const topUser = await bot.users.fetch(topUserId);
+	const topGuild = await bot.guilds.fetch(topGuildId);
+
+	const joinDate = await (bot.guilds.cache.find(g => g.id == message.guild.id))?.members.cache.find(m => m.id == bot.user.id)?.joinedAt;
+
+	const stats = {
+		weatherCheckCount: weatherCheckCount,
+		serverCount: serverCount,
+		topCommand: topCommand,
+		commandUseCount: commandUseCount,
+		topUser: topUser,
+		topGuild: topGuild,
+		joinDate: joinDate
+	}
+
+	const embed = await embedUtil.botStatsEmbed(message, stats);
+    message.channel.send({embeds: [embed]});
 }
 
 module.exports = {

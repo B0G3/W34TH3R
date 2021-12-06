@@ -3,6 +3,7 @@ const botSettings = require("../botSettings.json");
 const locationSchema = require("../models/location.js");
 const QuickChart = require('quickchart-js');
 const {getPhrase} = require("../util/languageUtil.js");
+const moment = require('moment');
 
 const capitalize = (s) => (s && s[0].toUpperCase() + s.slice(1)) || ""
 
@@ -110,33 +111,41 @@ module.exports = {
 			return (e.main.humidity/100)*(maxTemp-minTemp+4)+minTemp-2;
 		});
 
+		precipitationArr = dayInfo.map(e => {
+			return e.pop*(maxTemp-minTemp+4)+minTemp-2;
+		});
+
 		hourArr = dayInfo.map(e => { 
 			let parsedDate = parseTxtDate(e.dt_txt);
 			let hourDescription = `${parsedDate.hour}:${parsedDate.minute}`;
 			return hourDescription;
 		});
 
-		let _annotation = null;
+		let _annotation;
 		if(!(hourArr[0]=='00:00' || hourArr[hourArr.length-1]=='00:00')){
 			let id = hourArr.findIndex(el => {
 				return el === '00:00';
 			})
 			if(id>=0 && id<dayInfo.length){
 				const date = new Date(dayInfo[id].dt * 1000);
-				const formattedDate = `${capitalize(getPhrase(message.guild, getDayNameShort(date.getDay())))}. ${date.getMonth()}-${date.getDate()}`;
+				const formattedDate = `${capitalize(getPhrase(message.guild, getDayNameShort(date.getDay())))}. ${moment(date).format('MM-DD')}`;
 				_annotation = {
-					type: 'line',
-					mode: 'vertical',
-					scaleID: 'x-axis-0',
-					value: '00:00',
-					borderColor: 'white',
-					borderWidth: 2,
-					label: {
-						enabled: true,
-						fontColor: "#2f3136",
-						backgroundColor: '#ffffff',
-						content: formattedDate
-					}
+					annotations: [
+						{
+							type: 'line',
+							mode: 'vertical',
+							scaleID: 'x-axis-0',
+							value: '00:00',
+							borderColor: 'white',
+							borderWidth: 2,
+							label: {
+								enabled: true,
+								fontColor: "#2f3136",
+								backgroundColor: '#ffffff',
+								content: formattedDate
+							}
+						}
+					]
 				}
 			}
 		}
@@ -146,14 +155,11 @@ module.exports = {
 		.setConfig({
 			data: { labels: hourArr, datasets: [
 				{ label: getPhrase(message.guild, "EMBED_FORECASTPAGE_TEMPERATURE"), type: 'line', yAxisId: 'y1', data: temperatureArr, borderColor: '#f7d257', backgroundColor: '#f7d25750', fill: 'start' },
-				{ label: getPhrase(message.guild, "EMBED_FORECASTPAGE_HUMIDITY"), type: 'line', steppedLine: 'middle', yAxisId: 'y2', data: humidityArr, borderColor: '#5865f2', backgroundColor: '#5865f250', fill: 'start' }
+				{ label: getPhrase(message.guild, "EMBED_FORECASTPAGE_HUMIDITY"), type: 'line', steppedLine: 'middle', yAxisId: 'y2', data: humidityArr, borderColor: '#5865f250', backgroundColor: '#5865f220', fill: 'start' },
+				{ label: getPhrase(message.guild, "EMBED_FORECASTPAGE_PRECIPITATION"), type: 'line', yAxisId: 'y2', data: precipitationArr, borderColor: '#abbef0', backgroundColor: '#abbef050', fill: 'start' }
 				] },
 			options: {
-				annotation: {
-					annotations: [
-						_annotation
-					]
-				},
+				annotation: _annotation,
 				elements: {
                     point:{
                         radius: 0
