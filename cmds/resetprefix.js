@@ -3,10 +3,10 @@ const botSettings = require("../botSettings.json");
 const {getPhrase} = require("../util/languageUtil.js");
 
 const execFunction = async (bot, message, args) => {
-    prefixSchema.findOne({guildId: message.guild.id}, async(err, data) => {
+    prefixSchema.findOne({_id: message.guild.id}, async(err, data) => {
         if(err) throw err;
         if(data){
-            await prefixSchema.findOneAndDelete({guildId: message.guild.id});
+            await prefixSchema.findOneAndDelete({_id: message.guild.id});
             message.channel.send(getPhrase(message.guild, "CMD_RESETPREFIX_SUCCESS"));
         }else{
             message.channel.send(getPhrase(message.guild, "CMD_RESETPREFIX_FAILURE"));

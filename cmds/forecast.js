@@ -4,10 +4,6 @@ const embedUtil = require("../util/embedUtil.js");
 const {iso3166} = require("../countryCodes.json");
 const {getPhrase, getCode} = require("../util/languageUtil.js");
 
-const isNumeric = (str) => {
-	return /^\d+$/.test(str);
-}
-
 const execFunction = async (bot, message, args) => {
 	let result;
 	if(!args[0]){
@@ -20,7 +16,7 @@ const execFunction = async (bot, message, args) => {
 		return;
 	}else{
 		// Kiedy podajemy nazwe miejscowosci
-		if(!isNumeric(args[0].charAt(0))){
+		if(isNaN(args[0])){
 			result = await dataUtil.fetchForecastByCity(args.join(' '), getCode(message.guild));
 		}else{
 			// W przeciwnym przypadku musza byc dwa argumenty
@@ -28,7 +24,7 @@ const execFunction = async (bot, message, args) => {
 				message.channel.send({content: getPhrase(message.guild, "CMD_FORECAST_ERROR_2")});
 				return;
 			}else{
-				if(!isNumeric(args[1].charAt(0))){
+				if(isNaN(args[1])){
 					// Sprawdzenie po kodzie pocztowym
 					let zipCode = args[0];
 					let countryCode = args[1].toUpperCase();
@@ -56,18 +52,18 @@ const execFunction = async (bot, message, args) => {
 	}else{
 		const cityInfo = result.data.city;
 		
-		let dailyForecast = await dataUtil.fetchForecastByCoords(cityInfo.coord.lat, cityInfo.coord.lon, true, getCode(message.guild));
+		const dailyForecast = await dataUtil.fetchForecastByCoords(cityInfo.coord.lat, cityInfo.coord.lon, true, getCode(message.guild));
 		if(!dailyForecast.data){
 			message.channel.send({content: getPhrase(message.guild, "ERR_UNEXPECTED")});
 			return;
 		}
 
-		let frontEmbed = await embedUtil.forecastFrontEmbed(message, dailyForecast.data.daily, cityInfo);
+		const frontEmbed = await embedUtil.forecastFrontEmbed(message, dailyForecast.data.daily, cityInfo);
 		embeds.push(frontEmbed);
 
 		while(result.data.list.length>0){
 			let day = result.data.list.splice(0, 8);
-			let embed = await embedUtil.forecastPageEmbed(message, day, cityInfo);
+			const embed = await embedUtil.forecastPageEmbed(message, day, cityInfo);
 			embeds.push(embed);
 		}
 		embedUtil.createPages(message, embeds, 120000);

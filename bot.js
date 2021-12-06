@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const botSettings = require("./botSettings.json");
 const prefixSchema = require("./models/prefix.js");
+const statSchema = require("./models/stat.js");
 const languageUtil = require("./util/languageUtil.js")
 const mongoose = require("mongoose");
 const fs = require("fs");
@@ -43,7 +44,7 @@ loadCommands = (guild = null) => {
             console.log("No commands to load!")
             return;
         }
-        console.log(`Loading custom commands:`)
+        console.log(`Loading commands:`)
         jsfiles.forEach((f,i) => {
             let props = require(`./cmds/${f}`);
 
@@ -51,13 +52,11 @@ loadCommands = (guild = null) => {
                 console.log(`- ${f} loaded!`)
                 bot.commands.set(props.name, props);
                 
-                if (props.slashOptions){
-                    slashCommands?.create({
-                        name: props.name,
-                        description: languageUtil.getEnglishPhrase(props.description),
-                        options: props.slashOptions?props.slashOptions:null
-                    })
-                }
+                slashCommands?.create({
+                    name: props.name,
+                    description: languageUtil.getEnglishPhrase(props.description),
+                    options: props.slashOptions?props.slashOptions:null
+                })
 
                 props.aliases.forEach(alias => {
                     bot.aliases.set(alias, props.name);
@@ -69,26 +68,26 @@ loadCommands = (guild = null) => {
     });
 }
 
-mongoose.connect(botSettings.mongodb_srv, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log('Connected to database!');
-}).catch((err)=>{
-    console.log(err);
-    process.exit(1);
-})
+loadDatabase = async () => {
+    await mongoose.connect(botSettings.mongodb_srv, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    }).then(() => {
+        console.log('Connected to database!');
+    }).catch((err)=>{
+        console.log(err);
+        process.exit(1);
+    })
+}
 
-bot.on("ready", () => {
+bot.on("ready", async () => {
     const guildId = '838462696046985236';
     const guild = bot.guilds.cache.get(guildId);
 
-    languageUtil.loadLanguages(bot);
+    await loadDatabase();
+    await languageUtil.loadLanguages(bot);
     loadCommands(guild);
-
-    console.log('Ready!');
     
-
     /*
     let inviteLink = bot.generateInvite({
         permissions: [
@@ -131,11 +130,23 @@ bot.on("interactionCreate", async (interaction) => {
 
 })
 
+updateStat = async (guild, user, cmd) => {
+    await statSchema.findOneAndUpdate({
+        cmdName: cmd.name,
+        guildId: guild.id,
+        userId: user.id,
+	}, {
+        $inc: {usages: 1}
+	}, {
+		upsert: true
+	});
+}
+
 bot.on("messageCreate", async message => {
     if(message.author.bot) return;
     if(message.channel.type === "dm") return;
 
-    let messageArray = message.content.split(" ");
+    let messageArray = message.content.toLowerCase().split(" ");
     let command = messageArray[0];
 
     let prefix = await bot.prefix(message);
@@ -146,12 +157,19 @@ bot.on("messageCreate", async message => {
     let cmd = bot.commands.get(cmdStr) || bot.commands.get(bot.aliases.get(cmdStr));
 
     if(cmd){
-        if(!cmd.adminonly) cmd.run(bot, message, args);
+        if(!cmd.adminOnly){ 
+            cmd.run(bot, message, args); 
+            updateStat(message.guild, message.author, cmd);
+        }
         else{
-            cmd.run(bot, message, args);
+            if(message.member.permissions.has("ADMINISTRATOR")){ 
+                cmd.run(bot, message, args);
+                updateStat(message.guild, message.author, cmd);
+            }
+            else message.channel.send({content: languageUtil.getPhrase(message.guild, "ERR_CMD_NOPERM")});
         }
     }else{
-        message.channel.send("Nie znaleziono komendy.");
+        message.channel.send({content: languageUtil.getPhrase(message.guild, "ERR_CMD_NOTFOUND")});
     }
 });
 

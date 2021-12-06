@@ -4,10 +4,6 @@ const embedUtil = require("../util/embedUtil.js");
 const {iso3166} = require("../countryCodes.json");
 const {getPhrase, getCode} = require("../util/languageUtil.js");
 
-const isNumeric = (str) => {
-    return /^\d+$/.test(str);
-}
-
 const execFunction = async (bot, message, args) => {
 	let result;
 	if(!args[0]){
@@ -20,7 +16,7 @@ const execFunction = async (bot, message, args) => {
 		return;
 	}else{
 		// Kiedy podajemy nazwe miejscowosci
-		if(!isNumeric(args[0].charAt(0))){
+		if(isNaN(args[0])){
 			result = await dataUtil.fetchByCity(args.join(' '), getCode(message.guild));
 		}else{
 			// W przeciwnym przypadku musza byc dwa argumenty
@@ -28,7 +24,8 @@ const execFunction = async (bot, message, args) => {
 				message.channel.send({content: getPhrase(message.guild, "CMD_WEATHER_ERROR_2")});
 				return;
 			}else{
-				if(!isNumeric(args[1].charAt(0))){
+				if(isNaN(args[1])){
+					
 					// Sprawdzenie po kodzie pocztowym
 					let zipCode = args[0];
 					let countryCode = args[1].toUpperCase();

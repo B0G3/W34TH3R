@@ -3,20 +3,16 @@ const locationSchema = require("../models/location.js");
 const {getPhrase, getCode} = require("../util/languageUtil.js");
 const {iso3166} = require("../countryCodes.json");
 
-const isNumeric = (str) => {
-    return /^\d+$/.test(str);
-}
-
 const execFunction = async (bot, message, args) => {
     let result;
 	if(!args[0]){
         let location = await dataUtil.getUserLocation(message.author.id);
-		if(location) message.channel.send({content: `${getPhrase(message.guild, "CMD_LOCATION_RESPONSE_1")} ${location.name} | \`${location.lon}, ${location.lat}\``});
+		if(location) message.channel.send({content: `${getPhrase(message.guild, "CMD_LOCATION_RESPONSE_1")} ${location.name} | \`${location.lat}, ${location.lon}\``});
 		else message.channel.send({content: getPhrase(message.guild, "CMD_LOCATION_ERROR_1")});
 		return;
 	}else{
 		// Kiedy podajemy nazwe miejscowosci
-		if(!isNumeric(args[0].charAt(0))){
+		if(isNaN(args[0])){
 			result = await dataUtil.fetchByCity(args.join(' '), getCode(message.guild));
 		}else{
 			// W przeciwnym przypadku musza byc dwa argumenty
@@ -24,7 +20,7 @@ const execFunction = async (bot, message, args) => {
 				message.channel.send({content: getPhrase(message.guild, "CMD_LOCATION_ERROR_2")});
 				return;
 			}else{
-				if(!isNumeric(args[1].charAt(0))){
+				if(isNaN(args[1])){
 					// Sprawdzenie po kodzie pocztowym
 					let zipCode = args[0];
 					let countryCode = args[1].toUpperCase();
@@ -49,21 +45,18 @@ const execFunction = async (bot, message, args) => {
 		if(result.data) message.channel.send({content: `${getPhrase(message.guild, "ERR_PHRASE_1")} ${result.data.cod}): \`${result.data.message}\``});
 		else message.channel.send({content: getPhrase(message.guild, "ERR_UNEXPECTED")});
 	}else{
-
-        locationSchema.findOne({userId: message.author.id}, async(err, data) => {
-            if(err) throw err;
-            if(data){
-                await locationSchema.findOneAndDelete({userId: message.author.id});
-            }
-            data = new locationSchema({
-                userId: message.author.id,
-                name: result.data.name,
-                lon: result.data.coord.lon,
-                lat: result.data.coord.lat
-            })
-            data.save();
-            message.channel.send(`${getPhrase(message.guild, "CMD_LOCATION_SUCCESS")} - ${result.data.name} | \`${result.data.coord.lon}, ${result.data.coord.lat}\``);
-        })
+		await locationSchema.findOneAndUpdate({
+			_id: message.author.id
+		}, {
+			_id: message.author.id,
+			name: result.data.name,
+			lon: result.data.coord.lon,
+			lat: result.data.coord.lat
+		}, {
+			upsert: true
+		});
+		message.channel.send(`${getPhrase(message.guild, "CMD_LOCATION_SUCCESS")} - ${result.data.name} | \`${result.data.coord.lat}, ${result.data.coord.lon}\``);
+	
 	}
 }
 

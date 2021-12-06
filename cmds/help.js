@@ -24,7 +24,7 @@ const execFunction = async (bot, message, args) => {
 	}
 
 	const helpEmbed = new Discord.MessageEmbed()
-	.setColor(`#cb4b16`)
+	.setColor(`#5865f2`)
 	.setTitle(`**${getPhrase(message.guild, "CMD_HELP_AVAILABLE")}**`)
 	
 	for(e in categories){
@@ -32,13 +32,14 @@ const execFunction = async (bot, message, args) => {
 		sortedCommands[e].forEach(el => {
 			if(!el.hidden){
 				let syntax = (el.syntax!=null)?` ${getPhrase(message.guild, el.syntax)}`:'';
-				sum = sum + `[${el.name}]${syntax} - ${getPhrase(message.guild, el.description)}\n`
+				sum = sum + `${el.adminOnly?('[A]'):('')}[${el.name}]${syntax} - ${getPhrase(message.guild, el.description)}\n`
 			}
 		});
 		helpEmbed.addFields(
 			{ name: `${categories[e].icon} ${getPhrase(message.guild, categories[e].name)}`, value: "```CSS\n"+sum+"```"}
 		)
 	}
+	helpEmbed.setDescription(`**[A]** - ${getPhrase(message.guild, 'CMD_HELP_ADMINONLY')}\n**!** - ${getPhrase(message.guild, 'CMD_HELP_OPTIONAL')}`);
 	message.channel.send({embeds: [helpEmbed]});
 }
 

@@ -1,10 +1,24 @@
 {
     "languages": ["polish", "english"],
-    "codes":{
-        "english": "en",
-        "polish": "pl"
+    "details":{
+        "english": {
+            "code": "en",
+            "icon": ":flag_gb:"
+        },
+        "polish": {
+            "code": "pl",
+            "icon": ":flag_pl:"
+        }
     },
     "translations": {
+        "ERR_CMD_NOTFOUND": {
+            "english": "Command not fount!",
+            "polish": "Nie znaleziono komendy!"
+        },
+        "ERR_CMD_NOPERM": {
+            "english": "You need to be an admin to run this command!",
+            "polish": "Musisz być adminem, aby użyć tej komendy!"
+        },
         "ERR_UNEXPECTED": {
             "english": "An unexpected error occured",
             "polish": "Wystąpił niespodziewany błąd"
@@ -12,6 +26,14 @@
         "ERR_PHRASE_1": {
             "english": "An error occured (code",
             "polish": "Wystąpił błąd (kod"
+        },
+        "CMD_LANG_RESPONSE": {
+            "english": "Available languages",
+            "polish": "Dostępne języki"
+        },        
+        "CMD_LANG_DESCRIPTION": {
+            "english": "Lists all available languages",
+            "polish": "Pokazuje wszystkie dostępne języki"
         },
         "CMD_COUNTRIES_DESCRIPTION": {
             "english": "Lists all possible country codes (Iso3166 standard)",
@@ -56,6 +78,14 @@
         "CMD_HELP_SYNTAX": {
             "english": "!<command name>",
             "polish": "!<nazwa komendy>"
+        },
+        "CMD_HELP_ADMINONLY": {
+            "english": "Admin only",
+            "polish": "Tylko dla administratora"
+        },
+        "CMD_HELP_OPTIONAL": {
+            "english": "Optional argument",
+            "polish": "Argument opcjonalny"
         },
         "CMD_LOCATION_RESPONSE_1": {
             "english": "Your current location is",
@@ -157,6 +187,10 @@
             "english": "<data>",
             "polish": "<dane>"
         },
+        "CMD_STATS_DESCRIPTION": {
+            "english": "Shows stats",
+            "polish": "Pokazuje statystyki"
+        },
         "EMBED_PAGE_BTN_END": {
             "english": "HIDE",
             "polish": "UKRYJ"
@@ -221,6 +255,14 @@
             "english": "Pressure",
             "polish": "Ciśnienie"
         },
+        "EMBED_WEATHER_SUNRISE": {
+            "english": "Sunset",
+            "polish": "Wschód słońca"
+        },
+        "EMBED_WEATHER_SUNSET": {
+            "english": "Sunset",
+            "polish": "Zachód słońca"
+        },
         "EMBED_FORECASTFRONT_TO": {
             "english": "to",
             "polish": "do"
@@ -268,6 +310,14 @@
         "EMBED_FORECASTPAGE_HUMIDITY": {
             "english": "Humidity",
             "polish": "Wilgotność"
+        },
+        "EMBED_FORECASTPAGE_SUNRISE": {
+            "english": "Sunrise",
+            "polish": "Wschód słońca"
+        },
+        "EMBED_FORECASTPAGE_SUNSET": {
+            "english": "Sunset",
+            "polish": "Zachód słońca"
         },
         "DAY_SHORT_SUNDAY":{
             "english": "su",

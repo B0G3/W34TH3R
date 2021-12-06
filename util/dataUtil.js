@@ -4,7 +4,9 @@ const locationSchema = require("../models/location.js");
 const QuickChart = require('quickchart-js');
 const {getPhrase} = require("../util/languageUtil.js");
 
-parseDate = (input) => {
+const capitalize = (s) => (s && s[0].toUpperCase() + s.slice(1)) || ""
+
+const parseTxtDate = (input) => {
 	let parts = input.match(/(\d+)/g);
 	return {
 		year: parts[0],
@@ -91,6 +93,14 @@ module.exports = {
 	 
 		return location;
 	},
+	getDayName: getDayName = (day) => {
+		const dayNames = ['DAY_SUNDAY', 'DAY_MONDAY', 'DAY_TUESDAY', 'DAY_WEDNESDAY', 'DAY_THURSDAY', 'DAY_FRIDAY', 'DAY_SATURDAY'];
+		return dayNames[day];
+	},
+	getDayNameShort: getDayNameShort = (day) => {
+		const dayNames = ['DAY_SHORT_SUNDAY', 'DAY_SHORT_MONDAY', 'DAY_SHORT_TUESDAY', 'DAY_SHORT_WEDNESDAY', 'DAY_SHORT_THURSDAY', 'DAY_SHORT_FRIDAY', 'DAY_SHORT_SATURDAY'];
+		return dayNames[day];
+	},
 	fetchForecastChart: async (message, dayInfo) => {
 		temperatureArr = dayInfo.map(e => e.main.temp)
 		const minTemp = Math.ceil(Math.min(...temperatureArr));
@@ -101,19 +111,54 @@ module.exports = {
 		});
 
 		hourArr = dayInfo.map(e => { 
-			let parsedDate = parseDate(e.dt_txt);
+			let parsedDate = parseTxtDate(e.dt_txt);
 			let hourDescription = `${parsedDate.hour}:${parsedDate.minute}`;
 			return hourDescription;
 		});
+
+		let _annotation = null;
+		if(!(hourArr[0]=='00:00' || hourArr[hourArr.length-1]=='00:00')){
+			let id = hourArr.findIndex(el => {
+				return el === '00:00';
+			})
+			if(id>=0 && id<dayInfo.length){
+				const date = new Date(dayInfo[id].dt * 1000);
+				const formattedDate = `${capitalize(getPhrase(message.guild, getDayNameShort(date.getDay())))}. ${date.getMonth()}-${date.getDate()}`;
+				_annotation = {
+					type: 'line',
+					mode: 'vertical',
+					scaleID: 'x-axis-0',
+					value: '00:00',
+					borderColor: 'white',
+					borderWidth: 2,
+					label: {
+						enabled: true,
+						fontColor: "#2f3136",
+						backgroundColor: '#ffffff',
+						content: formattedDate
+					}
+				}
+			}
+		}
 
 		const forecastChart = new QuickChart();
 		forecastChart
 		.setConfig({
 			data: { labels: hourArr, datasets: [
-				{ label: getPhrase(message.guild, "EMBED_FORECASTPAGE_TEMPERATURE"), type: 'line', yAxisId: 'y1', data: temperatureArr, borderColor: '#f7d257', backgroundColor: '#f7d25750' },
-				{ label: getPhrase(message.guild, "EMBED_FORECASTPAGE_HUMIDITY"), type: 'bar', yAxisId: 'y2', data: humidityArr, borderColor: '#5865f2', categoryPercentage: 1, barPercentage: 1, borderWidth: { top:4, right:0, bottom:0, left:0 }, backgroundColor: '#5865f250' }
+				{ label: getPhrase(message.guild, "EMBED_FORECASTPAGE_TEMPERATURE"), type: 'line', yAxisId: 'y1', data: temperatureArr, borderColor: '#f7d257', backgroundColor: '#f7d25750', fill: 'start' },
+				{ label: getPhrase(message.guild, "EMBED_FORECASTPAGE_HUMIDITY"), type: 'line', steppedLine: 'middle', yAxisId: 'y2', data: humidityArr, borderColor: '#5865f2', backgroundColor: '#5865f250', fill: 'start' }
 				] },
 			options: {
+				annotation: {
+					annotations: [
+						_annotation
+					]
+				},
+				elements: {
+                    point:{
+                        radius: 0
+                    }
+                },
 				legend: {
 					display: true,
 					position: 'bottom',

@@ -11,6 +11,7 @@ const execFunction = async (bot, message, args) => {
             return;
         }
     }
+    /*
     prefixSchema.findOne({guildId: message.guild.id}, async(err, data) => {
         if(err) throw err;
         if(data){
@@ -23,6 +24,18 @@ const execFunction = async (bot, message, args) => {
         data.save();
         message.channel.send(`${getPhrase(message.guild, "CMD_SETPREFIX_SUCCESS")} **(${args[0]})**`);
     })
+    */
+
+    await prefixSchema.findOneAndUpdate({
+		_id: message.guild.id
+	}, {
+		_id: message.guild.id,
+		prefix: args[0]
+	}, {
+		upsert: true
+	});
+
+    message.channel.send(`${getPhrase(message.guild, "CMD_SETPREFIX_SUCCESS")} **(${args[0]})**`);
 }
 
 module.exports = {

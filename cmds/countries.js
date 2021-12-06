@@ -5,22 +5,15 @@ const {getPhrase, getCode} = require("../util/languageUtil.js");
 
 const execFunction = async (bot, message, args) => {
 	const countryCodes = [...iso3166];
-	const maxPerPage = 40;
+	const maxPerPage = 42;
 	const pages = Math.floor(countryCodes.length/maxPerPage) + 1;
 	let embedList = [];
-	let i = 0;
 	let p = 1;
-	let description = "";
 
 	while(countryCodes.length>0){
 		const chunk = countryCodes.splice(0, maxPerPage);
-		description = "";
 
-		for(c of chunk){
-			let countryName = countries.getName(c, getCode(message.guild));
-			description += `\:flag_${c.toLowerCase()}: ${countryName} (${c}) `;
-		}
-		embed = embedUtil.countryListEmbed(message, description, p, pages);
+		const embed = embedUtil.countryListEmbed(message, chunk);
 		embedList.push(embed);
 		p++;
 	}

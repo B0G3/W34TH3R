@@ -6,7 +6,6 @@ const guildLanguages = {}
 module.exports = {
     getPhrase: (guild, textId) => {
         if(!lang.translations[textId]){
-            //throw new Error(`Unknown text ID ${textId}`)
             console.log(`Unknown text ID ${textId}`);
             return `ERROR_ID_${textId}`
         }
@@ -17,12 +16,17 @@ module.exports = {
 
     },
     getEnglishPhrase: (textId) => {
+        if(!lang.translations[textId]){
+            console.log(`Unknown text ID ${textId}`);
+            return `ERROR_ID_${textId}`
+        }
+        
         return lang.translations[textId]['english'];
     },
     getCode: (guild) => {
         const selectedLanguage = guildLanguages[guild.id].toLowerCase();
 
-        return lang.codes[selectedLanguage];
+        return lang.details[selectedLanguage].code;
 
     },
     loadLanguages: async (bot) => {
@@ -35,6 +39,7 @@ module.exports = {
 
             guildLanguages[guildId] = result ? result.language : 'english';
         }
+        console.log("Languages loaded!")
     },
     setLanguage: async (guild, language) => {
         guildLanguages[guild.id] = language.toLowerCase();
