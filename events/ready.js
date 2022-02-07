@@ -45,10 +45,7 @@ const loadCommands = async (bot, guild = null) => {
 };
 
 const loadDatabase = async () => {
-	await mongoose.connect(botSettings.mongodb_srv, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-	}).then(() => {
+	await mongoose.connect(botSettings.mongodb_srv).then(() => {
 		console.log('Connected to database!');
 	}).catch((err) => {
 		console.log(err);
@@ -60,7 +57,7 @@ module.exports = {
 	name: 'ready',
 	once: true,
 	async run(bot) {
-		const guildId = '838462696046985236';
+		const guildId = botSettings.guild;
 		const guild = bot.guilds.cache.get(guildId);
 
 		await loadDatabase();

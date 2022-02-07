@@ -41,8 +41,8 @@ module.exports = {
 			.addComponents(forwardButton)
 			.addComponents(abandonButton);
 		let currentPage = 0;
-		const m = await message.channel.send({ content: getPhrase(message.guild, 'EMBED_PAGE_WAIT') });
-		m.edit({ content: `Strona \`[${currentPage + 1}/${pageAmount}]\``, embeds: [pages[currentPage]], components: [pageMovingButtons] });
+		const m = await message.channel.send({ content: `Strona \`[${currentPage + 1}/${pageAmount}]\``, embeds: [pages[currentPage]], components: [pageMovingButtons] });
+		// m.edit({ content: `Strona \`[${currentPage + 1}/${pageAmount}]\``, embeds: [pages[currentPage]], components: [pageMovingButtons] });
 
 		const filter = i => (i.customId == 'frwd_btn' || i.customId == 'bcwd_btn_embed' || i.customId == 'ab_btn_embed');
 
@@ -213,6 +213,8 @@ module.exports = {
 		const humidityArr = dayInfo.map(e => e.main.humidity);
 
 		const avgTemp = calcAverage(tempArr);
+		const tempMin = tempArr.sort((a, b) => a - b)[0];
+		const tempMax = tempArr.sort((a, b) => a - b).reverse()[0];
 		const avgHumidity = calcAverage(humidityArr);
 
 		const countryCode = cityData.country;
@@ -237,8 +239,8 @@ module.exports = {
 			.setTitle(getPhrase(message.guild, 'EMBED_FORECASTPAGE_FORECAST') + (countryCode ? (` | ${cityName}, ${countries.getName(countryCode, getCode(message.guild), { select: 'official' })}, ${countryCode}`) : ''))
 			.setThumbnail(`http://openweathermap.org/img/wn/${dayInfo[0].weather[0].icon}.png`)
 			.addField(`${getPhrase(message.guild, 'EMBED_FORECASTPAGE_AVG_TEMP')}:`, `\`\`\`${Math.round(avgTemp, 2)}\u00B0 C\`\`\``, true)
-			.addField(`${getPhrase(message.guild, 'EMBED_WEATHER_TEMP_MAX')}:`, `\`\`\`${dayInfo[0].main.temp_max}\u00B0 C\`\`\``, true)
-			.addField(`${getPhrase(message.guild, 'EMBED_WEATHER_TEMP_MIN')}:`, `\`\`\`${dayInfo[0].main.temp_min}\u00B0 C\`\`\``, true)
+			.addField(`${getPhrase(message.guild, 'EMBED_WEATHER_TEMP_MAX')}:`, `\`\`\`${tempMax}\u00B0 C\`\`\``, true)
+			.addField(`${getPhrase(message.guild, 'EMBED_WEATHER_TEMP_MIN')}:`, `\`\`\`${tempMin}\u00B0 C\`\`\``, true)
 			.addField(`${getPhrase(message.guild, 'EMBED_FORECASTPAGE_AVG_HUM')}:`, `\`\`\`${Math.round(avgHumidity, 2)} %\`\`\``, true)
 			.addField(`${getPhrase(message.guild, 'EMBED_FORECASTPAGE_PRESSURE')}:`, `\`\`\`${dayInfo[0].main.pressure} hPa\`\`\``, true)
 			.addField(`${getPhrase(message.guild, 'EMBED_FORECASTPAGE_SUNRISE')}:`, `\`\`\`${moment(sunriseUTC).format('HH:mm')} UTC\n${moment(sunriseLocal).format('HH:mm')} GMT${GMT}\`\`\``, false)

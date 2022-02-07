@@ -232,6 +232,6 @@ module.exports = {
 			.setHeight(250)
 			.setBackgroundColor('transparent');
 
-		return forecastChart.getUrl();
+		return forecastChart.getShortUrl();
 	},
 };

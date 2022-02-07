@@ -1,5 +1,5 @@
 const dataUtil = require('../util/dataUtil.js');
-const locationSchema = require('../models/location.js');
+const Location = require('../models/location.js');
 const { getPhrase, getCode } = require('../util/languageUtil.js');
 const { iso3166 } = require('../countryCodes.json');
 
@@ -48,7 +48,7 @@ const execFunction = async (bot, message, args) => {
 		else message.channel.send({ content: getPhrase(message.guild, 'ERR_UNEXPECTED') });
 	}
 	else {
-		await locationSchema.findOneAndUpdate({
+		await Location.findOneAndUpdate({
 			_id: message.author.id,
 		}, {
 			_id: message.author.id,

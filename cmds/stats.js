@@ -1,8 +1,8 @@
-const statSchema = require('../models/stat.js');
+const Stat = require('../models/stat.js');
 const embedUtil = require('../util/embedUtil.js');
 
 const execFunction = async (bot, message) => {
-	const weatherCheckCount = (await statSchema.aggregate([
+	const weatherCheckCount = (await Stat.aggregate([
 		{ $match: {
 			$or: [
 				{ cmdName: 'weather' },
@@ -12,7 +12,7 @@ const execFunction = async (bot, message) => {
 		}, { $group: { _id : null, sum : { $sum: '$usages' } } },
 	]))[0]?.sum;
 	const serverCount = bot.guilds.cache.size;
-	const topCommand = (await statSchema.aggregate(
+	const topCommand = (await Stat.aggregate(
 		[
 			{
 				$group:
@@ -23,13 +23,13 @@ const execFunction = async (bot, message) => {
 			},
 		],
 	).sort({ usages:-1 }).limit(1))[0]?._id;
-	const commandUseCount = (await statSchema.aggregate([
+	const commandUseCount = (await Stat.aggregate([
 		{ $group: { _id : null, sum : { $sum: '$usages' } } },
 		{
 			$project: { _id: 0 },
 		},
 	]))[0]?.sum;
-	const topUserId = (await statSchema.aggregate(
+	const topUserId = (await Stat.aggregate(
 		[
 			{
 				$group:
@@ -41,7 +41,7 @@ const execFunction = async (bot, message) => {
 		],
 	).sort({ usages:-1 }).limit(1))[0]?._id;
 
-	const topGuildId = (await statSchema.aggregate(
+	const topGuildId = (await Stat.aggregate(
 		[
 			{
 				$group:
@@ -76,6 +76,7 @@ module.exports = {
 	run: execFunction,
 	name: 'stats',
 	aliases: ['s', 'st'],
+	adminOnly: true,
 	description: 'CMD_STATS_DESCRIPTION',
 	categoryId: 2,
 };

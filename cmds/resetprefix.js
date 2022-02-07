@@ -1,11 +1,11 @@
-const prefixSchema = require('../models/prefix.js');
+const Prefix = require('../models/prefix.js');
 const { getPhrase } = require('../util/languageUtil.js');
 
 const execFunction = async (bot, message) => {
-	prefixSchema.findOne({ _id: message.guild.id }, async (err, data) => {
+	Prefix.findOne({ _id: message.guild.id }, async (err, data) => {
 		if (err) throw err;
 		if (data) {
-			await prefixSchema.findOneAndDelete({ _id: message.guild.id });
+			await Prefix.findOneAndDelete({ _id: message.guild.id });
 			message.channel.send(getPhrase(message.guild, 'CMD_RESETPREFIX_SUCCESS'));
 		}
 		else {

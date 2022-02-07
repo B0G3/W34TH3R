@@ -1,5 +1,5 @@
 const { languages } = require('../lang.json');
-const languageSchema = require('../models/language.js');
+const Language = require('../models/language.js');
 const { setLanguage, getPhrase } = require('../util/languageUtil.js');
 
 
@@ -17,7 +17,7 @@ const execFunction = async (bot, message, args) => {
 
 	setLanguage(guild, targetLang);
 
-	await languageSchema.findOneAndUpdate({
+	await Language.findOneAndUpdate({
 		_id: guild.id,
 	}, {
 		_id: guild.id,
